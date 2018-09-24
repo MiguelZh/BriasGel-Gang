@@ -3,12 +3,12 @@
 ## Game Introduction
 
 Splatoon-demake is a modified version adapted for browser of the succesful Nintendo game called Splatoon.
-It is a platform-shooter 2D game with multiplayer which consists of two teams up to two players of Inklings fight each
+It is a 2D multyplayer platform-shooter which consists of two teams of Inklings fighting each
 other with Ink guns. Every player will have a weapon, and it will deal damage if it hits the enemy team,
-otherwise it will ink the ground where the shot falls with the color of your team, this will allow you to 
-transform yourself and your allies into squids and swim through the inked tiles with boosted speed while
-also being able to climb up whenever you are swimming through your ink. Moreover, while you are in the 
-"swimming" state, your weapon will recargue whenever you do not come out of said state.
+otherwise it will ink the ground with the color of your team, this will allow you to 
+transform into a squid and swim through the inked surfaces with boosted speed while
+also being able to climb up walls. Moreover, while you are in the 
+"swimming" state, your weapon will rechargue.
 Once the timer finishes, the team that has more percentage of ground covered by ink will be 
 the winner of the match.
 

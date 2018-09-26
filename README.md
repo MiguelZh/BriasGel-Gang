@@ -1,4 +1,4 @@
-﻿# BriasGel Gang
+<a href="https://fontmeme.com/splatoon-font/"><img src="https://fontmeme.com/permalink/180926/3ea72bb366b8193970c324d28300dd50.png" alt="splatoon-font" border="0"></a>
  
 <a href="https://fontmeme.com/splatoon-font/"><img src="https://fontmeme.com/permalink/180926/840fff17aaeae53630c423a62be293a8.png" alt="splatoon-font" border="0"></a>
 

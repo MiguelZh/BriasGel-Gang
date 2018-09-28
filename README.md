@@ -2,6 +2,9 @@
  
 <a href="https://fontmeme.com/splatoon-font/"><img src="https://fontmeme.com/permalink/180926/840fff17aaeae53630c423a62be293a8.png" alt="splatoon-font" border="0"></a>
 
+<img style="-webkit-user-select: none;" src="https://lhshelpdesk.files.wordpress.com/2014/11/tldr-tldrlogo-2.jpg"  width="100" height="60" > **Splatoon-Demake brings the famous game of Nintendo to a 
+browser-playable 2D platformer.**
+
 ## Game Introduction
 
 Splatoon-demake is a modified version adapted for browser of the succesful Nintendo game called Splatoon.
@@ -19,3 +22,5 @@ the winner of the match.
 <img style="-webkit-user-select: none;" src="https://i.pinimg.com/originals/c5/4b/fc/c54bfcc5f67f3a0c94b43a7166baa4a2.png">
 
 Splatoon Advance - Mockup Pixel Artist: Davitsu Source: davitsu.tumblr.com
+
+

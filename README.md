@@ -14,3 +14,5 @@ also being able to climb up walls. Moreover, while you are in the
 Once the timer finishes, the team that has more percentage of ground covered by ink will be 
 the winner of the match.
 
+**Game footage
+<img style="-webkit-user-select: none;" src="https://i.pinimg.com/originals/c5/4b/fc/c54bfcc5f67f3a0c94b43a7166baa4a2.png">

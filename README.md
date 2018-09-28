@@ -1,4 +1,4 @@
- <p align="center"><img src="https://dewey.tailorbrands.com/production/brand_version_mockup_image/498/1235177498_cfa15dd3-578c-4921-a628-10b27a0e290d.png?cb=1538152939" width="200" height="100"  alt="Your brand" data-testing-id="card-image"><\p>
+ <p align="center"><img src="https://dewey.tailorbrands.com/production/brand_version_mockup_image/498/1235177498_cfa15dd3-578c-4921-a628-10b27a0e290d.png?cb=1538152939" width="200" height="100"  alt="Your brand" data-testing-id="card-image">
 
 <a href="https://fontmeme.com/splatoon-font/"><img src="https://fontmeme.com/permalink/180926/840fff17aaeae53630c423a62be293a8.png" alt="splatoon-font" border="0"></a>
 

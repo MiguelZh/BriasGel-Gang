@@ -79,7 +79,7 @@ window.onload = function () {
 
 
 
-
+/*
 var Inkling= function (position, sprite, color, size, health, ink, player){
   this._position=position;
   this._sprite=sprite;
@@ -189,7 +189,7 @@ var Shot=function(position,color,sprite,direction){
 Shot.prototype._bulletsize=x;
 Shot.prototype.Movement=function(){};
 Shot.prototype.Impact=function(){};
-
+*/
 
 
 

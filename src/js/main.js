@@ -23,10 +23,13 @@ var PreloaderScene = {
 
     // TODO: load here the assets for the game
     this.game.load.image('logo', 'images/phaser.png');
+    this.game.load.spritesheet('IdleAnimation', '/images/Idle.png', 39, 46);
+
   },
 
   create: function () {
     this.game.state.start('play');
+    
   }
 };
 
@@ -40,7 +43,6 @@ window.onload = function () {
 
   game.state.start('boot');
 };
-
 
 
 

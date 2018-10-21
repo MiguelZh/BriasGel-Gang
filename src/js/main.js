@@ -14,12 +14,13 @@ var BootScene = {
   }
 };
 
-
+var plataformas;
 var PreloaderScene = {
   preload: function () {
     this.loadingBar = this.game.add.sprite(0, 240, 'preloader_bar');
     this.loadingBar.anchor.setTo(0, 0.5);
     this.load.setPreloadSprite(this.loadingBar);
+    this.load.image('SBE_Inkopolis','images/SBE_Inkopolis.png'); // fondo del mapa principal
 
     // TODO: load here the assets for the game
     this.game.load.image('logo', 'images/phaser.png');
@@ -27,15 +28,33 @@ var PreloaderScene = {
 
   },
 
+
   create: function () {
     this.game.state.start('play');
+    this.add.image(320,180,'SBE_Inkopolis');
     
+    plataformas = this.physics.add.staticGroup();
+
+    platforms.create(400, 568, 'suelo').setScale(2).refreshBody(); // crear el jpg del suelo
+    plataformas.create(600,400,'suelo');
+    plataformas.create(50,250,'suelo');
+    plataformas.create(700,300,'suelo');
   }
 };
 
 
 window.onload = function () {
   var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
+  
+  game = {
+    physics: {
+      default: 'arcade',
+      arcade: {
+          gravity: { y: 300 },
+          debug: false
+      }
+  },
+  };
 
   game.state.add('boot', BootScene);
   game.state.add('preloader', PreloaderScene);

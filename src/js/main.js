@@ -23,11 +23,8 @@ var PreloaderScene = {
 
     // TODO: load here the assets for the game
     this.game.load.image('logo', 'images/phaser.png');
-    this.game.load.spritesheet('IdleAnimation', '/images/Idle.png', 39, 46);
-    this.game.load.spritesheet('RunAnimation', '/images/Run.png', 38, 46);
-    this.game.load.spritesheet('JumpAnimation', '/images/Jump.png', 40, 60);
-    this.game.load.spritesheet('TransformAnimation', '/images/Transformation.png', 39, 46);
-
+    this.game.load.image('platform', 'images/PlataformaPrueba.png');
+    this.game.load.spritesheet('Inkling', '/images/SpriteSheetInkling.png',40,61);
   },
 
   create: function () {

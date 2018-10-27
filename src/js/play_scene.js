@@ -1,57 +1,85 @@
 'use strict';
 var Inkling= function (game, x, y, sprite, speed, jump){
+  //Atributos
   Phaser.Sprite.call(this, game, x, y, sprite);
-  this.speed=speed;
+  this._speed=speed;
+  this._jump=jump;
+  this._health=100;
+  this._ammo=100;
+
+
+  //Físicas
   this.game.physics.arcade.enable(this);
-  this.cursors=this.game.input.keyboard.createCursorKeys();
-  this.jump=jump;
-  this.health=100;
-  this.ammo=100;
+  this.body.gravity.y=800;
+  this.body.bounce.y=0.2;
+  this.body.velocity.x=0;
+  this.body.velocity.y=0;
 
-
+  //Animaciones
+  this.game.add.existing(this);
+  this.frame=0;
+  this.animations.add('idle',[0,1,2,3,4,5,6,7,8,9], 9, true);
+  this.animations.add('jump', [10,11,12,13,14,15], 9, true);
+  this.animations.add('run', [20,21,22,23,24,25,26,27], 9, true);
+  this.anchor.setTo(.5,.5);
+  this.scale.setTo(this.scale.x * 5, this.scale.y *5);
+  
 }
 Inkling.prototype=Object.create(Phaser.Sprite.prototype);
 Inkling.prototype.constructor=Inkling;
+
+//Métodos Inkling
 
 Inkling.prototype.update=function(){
   var dir=0;
   if(this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) dir=-1;
   else if(this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) dir=1;
   this.Movement(dir);
+  this.animationshandler();
+ 
+}
 
+Inkling.prototype.animationshandler=function(){
+  if(this.body.velocity.x===0) this.animations.play('idle');
+  else this.animations.play('run');
 }
 
 Inkling.prototype.Movement=function (dir){
   if(this.scale.x*dir<0) this.scale.x=-this.scale.x;
-  this.body.velocity.x=dir*this.speed;
+  this.body.velocity.x=dir*this._speed;
 }
 
+var Platform = function(game, x, y, sprite){
+  Phaser.Sprite.call(this, game, x, y, sprite);
+  this.game.physics.arcade.enable(this);
+  this.body.immovable=true;
+}
+
+Platform.prototype=Object.create(Phaser.Sprite.prototype);
+Platform.prototype.constructor=Platform;
+
+//Platform.prototype.ChangeColor=function(){};
 
 
-
-
+var Platform;
 var Inklingsprite;
 
   var PlayScene = {
   create: function () {
-   Inklingsprite= new Inkling (this.game, this.game.world.centerX, this.game.world.centerY, 'IdleAnimation',200,0);
-   this.game.add.existing(Inklingsprite);
-   Inklingsprite.anchor.setTo(.5,.5);
-   Inklingsprite.scale.setTo(Inklingsprite.scale.x * 5, Inklingsprite.scale.y *5);
-   Inklingsprite.frame=0;
-   Inklingsprite.animations.add('idle', [0,1,2,3,4,5,6,7,8,9], 9, true);
-   Inklingsprite.animations.play('idle');
+   Inklingsprite= new Inkling (this.game, this.game.world.centerX, 0, 'Inkling',400,0);
    
-  this.physics.startSystem(Phaser.Physics.ARCADE);
-  Inklingsprite.body.gravity.y=800;
-  Inklingsprite.body.collideWorldBounds=true;
-  Inklingsprite.body.bounce.y=0.5;
-  Inklingsprite.body.bounce.x=0.5;
-  
 
+   Platform=new Platform(this.game, this.game.world.centerX-100, 500, 'platform');
+   this.game.add.existing(Platform);
+   Platform.scale.setTo(Platform.scale.x*5);
+   this.physics.startSystem(Phaser.Physics.ARCADE);
+  
   },
   update: function () {
     Inklingsprite.update();
+    this.game.physics.arcade.collide(Inklingsprite, Platform);
+  
+    
 
 
 

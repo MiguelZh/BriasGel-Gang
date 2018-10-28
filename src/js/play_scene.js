@@ -23,7 +23,7 @@ var Inkling= function (game, x, y, sprite, speed, jump){
   this.animations.add('jump', [10,11,12,13,14,15], 9, true);
   this.animations.add('run', [20,21,22,23,24,25,26,27], 9, true);
   this.anchor.setTo(.5,.5);
-  this.scale.setTo(this.scale.x * 5, this.scale.y *5);
+  this.scale.setTo(this.scale.x * 4, this.scale.y *4);
   
 }
 Inkling.prototype=Object.create(Phaser.Sprite.prototype);

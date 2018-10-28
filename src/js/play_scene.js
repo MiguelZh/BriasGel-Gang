@@ -10,8 +10,9 @@ var Inkling= function (game, x, y, sprite, speed, jump){
 
   //Físicas
   this.game.physics.arcade.enable(this);
+  this.body.collideWorldBounds=true;
+  this.body.collideWorldBounds;
   this.body.gravity.y=800;
-  this.body.bounce.y=0.2;
   this.body.velocity.x=0;
   this.body.velocity.y=0;
 
@@ -35,13 +36,27 @@ Inkling.prototype.update=function(){
   if(this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) dir=-1;
   else if(this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) dir=1;
   this.Movement(dir);
+  if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP))
+    {
+        if (this.body.onFloor())
+        {
+            this.body.velocity.y = -200*this._jump;
+        }
+    }
   this.animationshandler();
  
 }
 
 Inkling.prototype.animationshandler=function(){
-  if(this.body.velocity.x===0) this.animations.play('idle');
-  else this.animations.play('run');
+  if(this.body.onFloor()){
+     if(this.body.velocity.x===0)this.animations.play('idle');
+     else this.animations.play('run');
+  }
+  
+  
+  
+
+  
 }
 
 Inkling.prototype.Movement=function (dir){
@@ -49,35 +64,26 @@ Inkling.prototype.Movement=function (dir){
   this.body.velocity.x=dir*this._speed;
 }
 
-var Platform = function(game, x, y, sprite){
-  Phaser.Sprite.call(this, game, x, y, sprite);
-  this.game.physics.arcade.enable(this);
-  this.body.immovable=true;
-}
-
-Platform.prototype=Object.create(Phaser.Sprite.prototype);
-Platform.prototype.constructor=Platform;
-
-//Platform.prototype.ChangeColor=function(){};
-
-
-var Platform;
 var Inklingsprite;
-
+var map; var layer;
   var PlayScene = {
   create: function () {
-   Inklingsprite= new Inkling (this.game, this.game.world.centerX, 0, 'Inkling',400,0);
-   
+   Inklingsprite= new Inkling (this.game, this.game.world.centerX, 0, 'Inkling',400,1.8);
+   map= this.game.add.tilemap('tilemap');
+   map.addTilesetImage('tileset');
+   map.setCollisionBetween(0,20);
+   layer= map.createLayer(0);
+   layer.resizeWorld();
+   this.game.camera.follow(Inklingsprite);
 
-   Platform=new Platform(this.game, this.game.world.centerX-100, 500, 'platform');
-   this.game.add.existing(Platform);
-   Platform.scale.setTo(Platform.scale.x*5);
    this.physics.startSystem(Phaser.Physics.ARCADE);
   
   },
   update: function () {
     Inklingsprite.update();
-    this.game.physics.arcade.collide(Inklingsprite, Platform);
+    this.game.physics.arcade.collide(Inklingsprite, layer);
+    console.log(Inklingsprite.body.velocity);
+   
   
     
 

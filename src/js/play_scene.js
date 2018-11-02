@@ -8,9 +8,6 @@ var Inkling= function (game, x, y, sprite, speed, jump){
   this._health=100;
   this._ammo=100;
 
-
-
-
   //Físicas
   this.game.physics.arcade.enable(this);
   this.body.collideWorldBounds=true;
@@ -41,7 +38,6 @@ Inkling.prototype.update=function(){
   else if(this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) dir=1;
   this.Movement(dir);
   if(this.game.input.keyboard.isDown(Phaser.Keyboard.DOWN)){
-    console.log("aaa");
     this.animations.play('transform', 9, false);
   } 
   else if(this.body.onFloor() && this.body.velocity.x===0) this.animations.play('idle');

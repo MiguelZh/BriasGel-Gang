@@ -23,6 +23,8 @@ var Inkling= function (game, x, y, sprite, speed, jump){
   this.animations.add('jump', [10,11,12,13,14,15], 9, true);
   this.animations.add('run', [20,21,22,23,24,25,26,27], 9, true);
   this.animations.add('transform', [30,31,32,33,34], 9, true);
+  this.animations.add('fall',[70,71],9,true);
+  this.animations.add('ground',[80,81,82],9,true);
   this.anchor.setTo(.5,.5);
   this.scale.setTo(this.scale.x * 2, this.scale.y *2);
   
@@ -32,15 +34,19 @@ Inkling.prototype.constructor=Inkling;
 
 //Métodos Inkling
 
+var suelo = true;
+var aux ;
 Inkling.prototype.update=function(){
   var dir=0;
+  if(this.body.velocity.y ===0 && this.body.velocity.y <14 && this.body.velocity.y>13) suelo = true;
+  else suelo = false;
   if(this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) dir=-1;
   else if(this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) dir=1;
   this.Movement(dir);
-  if(this.game.input.keyboard.isDown(Phaser.Keyboard.DOWN)){
+  if(this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
     this.animations.play('transform', 9, false);
   } 
-  else if(this.body.onFloor() && this.body.velocity.x===0) this.animations.play('idle');
+  else if(this.body.onFloor() && this.body.velocity.x===0 && !aux) this.animations.play('idle');
   else if(this.body.onFloor() && this.body.velocity.x !==0) this.animations.play('run');
   if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP))
     {
@@ -50,9 +56,11 @@ Inkling.prototype.update=function(){
             this.animations.play('jump', 10, false);
         }
     }
+  //if(suelo===false && this.body.velocity.y>0 ){this.animations.play('fall',5,false);aux =true;}
+  //if(suelo === true && aux ===true ) {this.animations.play('ground',9,false);aux = false}
+  console.log(this.body.velocity.y ===0 );
   
- 
-}
+  }
 
 
 
@@ -87,7 +95,7 @@ var map; var layer;
     if(this.game.input.keyboard.isDown(Phaser.Keyboard.O)) map.replace(1,2);
     else if(this.game.input.keyboard.isDown(Phaser.Keyboard.W)) map.replace(2,1);
 
-    console.log(Inklingsprite.body.velocity.y);
+  //console.log(Inklingsprite.body.velocity.y);
    
   
     

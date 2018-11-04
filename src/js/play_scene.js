@@ -5,7 +5,7 @@ var Inklingsprite;
 var map; var layer;
   var PlayScene = {
   create: function () {
-    game.physics.startSystem(Phaser.Physics.ARCADE);
+
    Inklingsprite= new Inkling (this.game, this.game.world.centerX, 0, 'Inkling',400,-520);
    map= this.game.add.tilemap('tilemap');
    map.addTilesetImage('tileset');

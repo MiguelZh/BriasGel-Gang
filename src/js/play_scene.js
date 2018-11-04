@@ -9,7 +9,7 @@ var nextfire=0;
   var PlayScene = {
   create: function () {
 
-   Inklingsprite= new Inkling (this.game, this.game.world.centerX, 0, 'Inkling',400,-600);
+   Inklingsprite= new Inkling (this.game, this.game.world.centerX, 0, 'Inkling',400,-600, 'bullet');
    map= this.game.add.tilemap('tilemap');
    map.addTilesetImage('tileset');
    layer= map.createLayer('Capa de Patrones 1');
@@ -23,8 +23,6 @@ var nextfire=0;
   update: function () {
     this.game.physics.arcade.collide(Inklingsprite, layer);
     Inklingsprite.update();
-    if(this.game.input.keyboard.isDown(Inklingsprite.shootkey)&& this.game.time.now>nextfire) {nextfire=this.game.time.now+firerate;
-       var bullet = new shot(this.game, Inklingsprite.x , Inklingsprite.y, 'bullet', +700*Inklingsprite.scale.x, 0)}
     if(this.game.input.keyboard.isDown(Phaser.Keyboard.O)) map.replace(1,2);
     else if(this.game.input.keyboard.isDown(Phaser.Keyboard.W)) map.replace(2,1);
   }

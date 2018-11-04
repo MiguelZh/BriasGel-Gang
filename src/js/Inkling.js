@@ -1,16 +1,19 @@
 'use strict'
+var shot=require('./Shot.js')
 
-
- var Inkling=function (game, x, y, sprite, speed, jump){
+ var Inkling=function (game, x, y, sprite, speed, jump, bulletsprite){
     //Atributos
     Phaser.Sprite.call(this, game, x, y, sprite);
+    this.kidspeed=speed;
+    this.squidspeed=this.kidspeed*0.5;
     this._speed=speed;
     this._jump=jump;
     this._health=100;
     this._ammo=100;
-  
+    this.bulletsprite=bulletsprite;
     this.iskid=true;
     this.shooting=false;
+    this.nextfire=0;
   
     
     //Controles
@@ -35,26 +38,29 @@
     this.animations.add('run', [20,21,22,23,24,25,26,27], 9, true);
     this.animations.add('transform', [30,31,32,33,34], 9, false);
     this.animations.add('detransform', [34,33,32,31,30], 9, true);
+    this.animations.add('squididle', [60,61], 9, true);
     this.animations.add('movesquid', [60,61,62,63], 9, true);
     this.animations.add('fall', [70,71], 9, true);
     this.animations.add('shootidle', [41,42,43,44], 9, false);
     this.animations.add('shootrun', [50,51,52,53,54,55,56,57], 9, false);
     
   
-    this.anchor.setTo(.5,.5);
+    this.anchor.setTo(0.5,0.5);
     this.scale.setTo(this.scale.x * 2, this.scale.y *2);
     
   }
   Inkling.prototype=Object.create(Phaser.Sprite.prototype);
   Inkling.prototype.constructor=Inkling;
   
-  Inkling.prototype.FireRate=10;
+  Inkling.prototype.FireRate=200;
 
   //Métodos Inkling
 
   Inkling.prototype.update=function(){
     var dir=0;
     //movimiento
+    if(this.iskid) this._speed=this.kidspeed;
+    else this._speed=this.squidspeed;
     if(this.game.input.keyboard.isDown(this.mrightkey)) dir=1;
     else if(this.game.input.keyboard.isDown(this.mleftkey)) dir=-1;
     this.Movement(dir);
@@ -63,20 +69,23 @@
     //transformación
     if(this.game.input.keyboard.isDown(this.transkey))this.iskid=false;
     else this.iskid=true;
-
-    
-    if(this.game.input.keyboard.isDown(this.shootkey)) this.shooting=true;
+    //disparo
+    if(this.game.input.keyboard.isDown(this.shootkey)&&this.iskid){
+     this.shooting=true;
+     this.Fire();
+    }
     else this.shooting=false;
     //animar
-
     this.Animator();
-  
-
   }
   
   Inkling.prototype.Animator=function()
   {
-    if(!this.iskid) this.animations.play('movesquid', 9, false);
+    if(!this.iskid){ 
+      if(this.body.velocity.x===0 && this.body.velocity.y===0)
+      this.animations.play('squididle', 3, false);
+      else this.animations.play('movesquid', 9, true);
+  }
     else
     {
       if(this.body.onFloor())
@@ -95,12 +104,15 @@
     }
         
       }
-      else if(this.body.velocity.y>=0)
+      else {
+      if(this.body.velocity.y>=0 && !this.shooting)
       {
        this.animations.play('fall', 9, false);
       }
+      else if(this.shooting) this.animations.play('shootidle');
     }
   }
+}
   
   Inkling.prototype.Movement=function (dir)
   {
@@ -112,14 +124,17 @@
   Inkling.prototype.Damage=function(damage){
     this._health=this._health-damage;
   }
-
-  Inkling.prototype.Fire=function(bulletsprite){
-    if(this.game.time.now>nextfire){
-      nextfire=this.game.time.now + this.FireRate;
+  var velocitymul;
+  Inkling.prototype.Fire=function(){
+    if(this.game.time.now>this.nextfire){
+      this.nextfire=this.game.time.now + this.FireRate;
+    if(this.body.velocity.x!=0)  velocitymul=1.2
+    else velocitymul=1;
     if(this.scale.x<0){
-    var bullet=new shot(this.game, this.x-0.5*this.scale, this.y, bulletsprite, -100, 0);
+    var bullet=new shot(this.game, this.x-this.scale.x-60, this.y+10, 'bullet', -900*velocitymul, 0);
+    
       }
-    else var bullet=new shot(this.game, this.x+0.5*this.scale, this.y, 100, 0);
+    else var bullet=new shot(this.game, this.x+this.scale.x+60, this.y+10, 'bullet', 900*velocitymul, 0);
     }
   }
 

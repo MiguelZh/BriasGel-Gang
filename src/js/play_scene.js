@@ -1,12 +1,15 @@
 'use strict'
 
 var Inkling = require('./Inkling.js');
+var shot= require('./Shot.js');
 var Inklingsprite;
 var map; var layer;
+var nextfire=0;
+   var firerate=200;
   var PlayScene = {
   create: function () {
 
-   Inklingsprite= new Inkling (this.game, this.game.world.centerX, 0, 'Inkling',400,-520);
+   Inklingsprite= new Inkling (this.game, this.game.world.centerX, 0, 'Inkling',400,-600);
    map= this.game.add.tilemap('tilemap');
    map.addTilesetImage('tileset');
    layer= map.createLayer('Capa de Patrones 1');
@@ -15,14 +18,17 @@ var map; var layer;
    this.game.camera.follow(Inklingsprite);
    this.physics.startSystem(Phaser.Physics.ARCADE);
    
+   
   },
   update: function () {
     this.game.physics.arcade.collide(Inklingsprite, layer);
     Inklingsprite.update();
+    if(this.game.input.keyboard.isDown(Inklingsprite.shootkey)&& this.game.time.now>nextfire) {nextfire=this.game.time.now+firerate;
+       var bullet = new shot(this.game, Inklingsprite.x , Inklingsprite.y, 'bullet', +700*Inklingsprite.scale.x, 0)}
     if(this.game.input.keyboard.isDown(Phaser.Keyboard.O)) map.replace(1,2);
     else if(this.game.input.keyboard.isDown(Phaser.Keyboard.W)) map.replace(2,1);
   }
-  
+
 
   
   

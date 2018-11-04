@@ -1,14 +1,23 @@
 'use strict'
- var Inkling=function (game, x, y, sprite, speed, jump){
+ var Inkling=function (game, x, y, sprite, speed, jump,shoot){
+
+
     //Atributos
     Phaser.Sprite.call(this, game, x, y, sprite);
     this._speed=speed;
     this._jump=jump;
+    this._shoots = shoot;
     this._health=100;
     this._ammo=100;
   
     this.iskid=true;
-  
+
+    /*bullet = game.add.group();
+    bullets.enableBody = true;
+    bullets,physicsBodyType = Phaser.Physics.ARCADE;
+    bullets.createMultiple(50, 'bullet');
+    bullets.setAll('checkWorldBounds', true);
+    bullets.setAll('outOfBoundsKill', true);*/
     
     //Controles
     this.mrightkey=Phaser.Keyboard.RIGHT;
@@ -45,7 +54,7 @@
   Inkling.prototype.constructor=Inkling;
   
   //Métodos Inkling
-  
+
   Inkling.prototype.update=function(){
     var dir=0;
     //movimiento
@@ -57,6 +66,7 @@
     //transformación
     if(this.game.input.keyboard.isDown(this.transkey)) this.iskid=false;
     else this.iskid=true;
+    if(this.game.input.keyboard.isDown(this.shootkey)) this._shoots = this.fire();
     //animar
     this.Animator();
   }
@@ -84,5 +94,17 @@
     if(this.scale.x*dir<0) this.scale.x=-this.scale.x;
     this.body.velocity.x=dir*this._speed;
   
+  }
+  Inkling.prototype.fire=function(){
+    if (game.time.now > nextFire && bullets.countDead() > 0)
+    {
+        nextFire = game.time.now + 100;
+
+        var bullet = bullets.getFirstDead();
+
+        bullet.reset(this.body.x - 8, this.body.y - 8);
+
+        game.physics.arcade.moveToPointer(bullet, 300);
+    }
   }
 module.exports=Inkling;

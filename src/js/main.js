@@ -26,6 +26,7 @@ var PreloaderScene = {
     this.game.load.spritesheet('Inkling', 'images/SpriteSheetInkling.png',50,61);
     this.game.load.tilemap('tilemap', 'images/tilemap.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('tileset', 'images/tileset.png');
+    this.game.load.image('bullet', 'images/nut.png');
   },
 
   create: function () {

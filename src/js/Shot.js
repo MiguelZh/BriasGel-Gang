@@ -1,9 +1,11 @@
 'use strict'
 
 var Shot=function(game, x, y, sprite, speedx, speedy){
-    Phaser.Sprite.call(this, game, x, y, sprite)
+    
+    Phaser.Sprite.call(this, game, x, y, sprite);
     this.speedx=speedx;
     this.speedy=speedy;
+    
 
     //Físicas
     this.game.physics.arcade.enable(this);
@@ -26,6 +28,11 @@ Shot.prototype.Damage=10;
 
 Shot.prototype.Destroy=function(){
     this.destroy();
+    
+}
+
+Shot.prototype.update=function(){
+    this.rotation=Math.atan((this.body.velocity.y)/this.body.velocity.x);
 }
 
 

@@ -70,13 +70,15 @@ var shot=require('./Shot.js')
     if(this.game.input.keyboard.isDown(this.transkey))this.iskid=false;
     else this.iskid=true;
     //disparo
-    if(this.game.input.keyboard.isDown(this.shootkey)&&this.iskid){
+    if(this.game.input.keyboard.isDown(this.shootkey) && this.iskid){
      this.shooting=true;
      this.Fire();
     }
     else this.shooting=false;
+   
     //animar
     this.Animator();
+    
   }
   
   Inkling.prototype.Animator=function()
@@ -125,16 +127,17 @@ var shot=require('./Shot.js')
     this._health=this._health-damage;
   }
   var velocitymul;
-  Inkling.prototype.Fire=function(){
+  Inkling.prototype.Fire= function(){
+    var bullet=null;
     if(this.game.time.now>this.nextfire){
       this.nextfire=this.game.time.now + this.FireRate;
     if(this.body.velocity.x!=0)  velocitymul=1.2
     else velocitymul=1;
     if(this.scale.x<0){
-    var bullet=new shot(this.game, this.x-this.scale.x-60, this.y+10, 'bullet', -900*velocitymul, 0);
+     bullet=new shot(this.game, this.x-this.scale.x-60, this.y+10, 'bullet', -900*velocitymul, 0);
     
       }
-    else var bullet=new shot(this.game, this.x+this.scale.x+60, this.y+10, 'bullet', 900*velocitymul, 0);
+    else bullet=new shot(this.game, this.x+this.scale.x+60, this.y+10, 'bullet', 900*velocitymul, 0);
     }
   }
 

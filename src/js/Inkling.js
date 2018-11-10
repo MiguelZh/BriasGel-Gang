@@ -14,6 +14,7 @@ var shot=require('./Shot.js')
     this.iskid=true;
     this.shooting=false;
     this.nextfire=0;
+    this.shots=[];
   
     
     //Controles
@@ -56,8 +57,9 @@ var shot=require('./Shot.js')
 
   //Métodos Inkling
 
-  Inkling.prototype.update=function(){
+  Inkling.prototype.update=function(Pool){
     var dir=0;
+    var bullet=null;
     //movimiento
     if(this.iskid) this._speed=this.kidspeed;
     else this._speed=this.squidspeed;
@@ -72,13 +74,13 @@ var shot=require('./Shot.js')
     //disparo
     if(this.game.input.keyboard.isDown(this.shootkey) && this.iskid){
      this.shooting=true;
-     this.Fire();
+     this.Fire(Pool);
     }
     else this.shooting=false;
-   
+
     //animar
     this.Animator();
-    
+    return this.shots;
   }
   
   Inkling.prototype.Animator=function()
@@ -113,6 +115,7 @@ var shot=require('./Shot.js')
       }
       else if(this.shooting) this.animations.play('shootidle');
     }
+  
   }
 }
   
@@ -127,17 +130,20 @@ var shot=require('./Shot.js')
     this._health=this._health-damage;
   }
   var velocitymul;
-  Inkling.prototype.Fire= function(){
-    var bullet=null;
+  Inkling.prototype.Fire= function(Pool){
     if(this.game.time.now>this.nextfire){
       this.nextfire=this.game.time.now + this.FireRate;
     if(this.body.velocity.x!=0)  velocitymul=1.2
     else velocitymul=1;
     if(this.scale.x<0){
-     bullet=new shot(this.game, this.x-this.scale.x-60, this.y+10, 'bullet', -900*velocitymul, 0);
+     var bullet=Pool.spawn(this.x-this.scale.x-60, this.y+10);
+     bullet.initialize('bullet',-900*velocitymul, 400);
     
       }
-    else bullet=new shot(this.game, this.x+this.scale.x+60, this.y+10, 'bullet', 900*velocitymul, 0);
+    else{ 
+     var bullet=Pool.spawn(this.x+this.scale.x+60, this.y+10);
+     bullet.initialize('bullet', 900*velocitymul, 400);
+      }
     }
   }
 

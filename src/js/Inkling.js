@@ -1,7 +1,7 @@
 'use strict'
 var shot=require('./Shot.js')
 
- var Inkling=function (game, x, y, sprite, speed, jump, bulletsprite){
+ var Inkling=function (game, x, y, sprite, speed, jump){
     //Atributos
     Phaser.Sprite.call(this, game, x, y, sprite);
     this.kidspeed=speed;
@@ -10,11 +10,10 @@ var shot=require('./Shot.js')
     this._jump=jump;
     this._health=100;
     this._ammo=100;
-    this.bulletsprite=bulletsprite;
     this.iskid=true;
     this.shooting=false;
     this.nextfire=0;
-    this.shots=[];
+
   
     
     //Controles
@@ -53,24 +52,29 @@ var shot=require('./Shot.js')
   Inkling.prototype=Object.create(Phaser.Sprite.prototype);
   Inkling.prototype.constructor=Inkling;
   
+  //Atributos Estáticos
   Inkling.prototype.FireRate=200;
+  
 
   //Métodos Inkling
 
   Inkling.prototype.update=function(Pool){
     var dir=0;
-    var bullet=null;
+   
     //movimiento
     if(this.iskid) this._speed=this.kidspeed;
     else this._speed=this.squidspeed;
     if(this.game.input.keyboard.isDown(this.mrightkey)) dir=1;
     else if(this.game.input.keyboard.isDown(this.mleftkey)) dir=-1;
     this.Movement(dir);
+
     //Salto
     if(this.body.onFloor()&&this.game.input.keyboard.isDown(this.jumpkey)) this.body.velocity.y=this._jump;
+
     //transformación
     if(this.game.input.keyboard.isDown(this.transkey))this.iskid=false;
     else this.iskid=true;
+
     //disparo
     if(this.game.input.keyboard.isDown(this.shootkey) && this.iskid){
      this.shooting=true;
@@ -80,18 +84,21 @@ var shot=require('./Shot.js')
 
     //animar
     this.Animator();
-    return this.shots;
+    
   }
   
   Inkling.prototype.Animator=function()
   {
+    //Animaciones del calamar
     if(!this.iskid){ 
       if(this.body.velocity.x===0 && this.body.velocity.y===0)
       this.animations.play('squididle', 3, false);
       else this.animations.play('movesquid', 9, true);
   }
+  //Animaciones de la niña
     else
     {
+      //Animaciones en el suelo
       if(this.body.onFloor())
       {
         if(this.game.input.keyboard.isDown(this.jumpkey)) this.animations.play('jump', 9, false);
@@ -108,6 +115,7 @@ var shot=require('./Shot.js')
     }
         
       }
+      //Animaciones en el aire
       else {
       if(this.body.velocity.y>=0 && !this.shooting)
       {
@@ -121,28 +129,28 @@ var shot=require('./Shot.js')
   
   Inkling.prototype.Movement=function (dir)
   {
-    if(this.scale.x*dir<0) this.scale.x=-this.scale.x;
+    if(this.scale.x*dir<0) this.scale.x=-this.scale.x;//cambio de orientación de sprite
     this.body.velocity.x=dir*this._speed;
-  
   }
 
   Inkling.prototype.Damage=function(damage){
-    this._health=this._health-damage;
+    this._health=this._health-damage;//ser dañado
   }
-  var velocitymul;
+
+  
   Inkling.prototype.Fire= function(Pool){
-    if(this.game.time.now>this.nextfire){
+    var velocitymul;//aumento de velocidad de la bala si se esta moviendo
+
+    if(this.game.time.now>this.nextfire){//si ha pasado suficiente tiempo entre disparos
       this.nextfire=this.game.time.now + this.FireRate;
-    if(this.body.velocity.x!=0)  velocitymul=1.2
+    if(this.body.velocity.x!==0)  velocitymul=1.2;
     else velocitymul=1;
     if(this.scale.x<0){
-     var bullet=Pool.spawn(this.x-this.scale.x-60, this.y+10);
-     bullet.initialize('bullet',-900*velocitymul, 400);
-    
+     Pool.spawn(this.x-this.scale.x-60,this.y,'bullet',-1*velocitymul);//disparo hacia la izquierda
       }
     else{ 
-     var bullet=Pool.spawn(this.x+this.scale.x+60, this.y+10);
-     bullet.initialize('bullet', 900*velocitymul, 400);
+
+     Pool.spawn(this.x+this.scale.x+60,this.y,'bullet',1*velocitymul);//disparo hacia la derecha
       }
     }
   }

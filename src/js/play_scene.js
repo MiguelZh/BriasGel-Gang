@@ -1,20 +1,24 @@
 'use strict'
 
-function Pool(game, entities) {
+//clase pool 
+
+function ShotsPool(game, entities) {
   this._group = game.add.group();
   this._group.addMultiple(entities);
   this._group.callAll('kill');
 }
 
-Pool.prototype.spawn=function(x,y){
+ShotsPool.prototype.spawn=function(x,y,sprite, dir){
     var entity = this._group.getFirstExists(false);
     if (entity) {
-      entity.reset(x, y);
+      entity.revive();
+     
+     entity.initialize(x, y, sprite, dir);
     }
     return entity;
 }
 
-Pool.prototype.forEachAlive=function(funcion){
+ShotsPool.prototype.forEachAlive=function(funcion){
   this._group.forEachAlive(funcion);
 }
   
@@ -24,37 +28,45 @@ Pool.prototype.forEachAlive=function(funcion){
 var Inkling = require('./Inkling.js');
 var player;
 var map; var layer;
-var pool;
+var shots;
 var shot=require('./Shot.js');
 
   var PlayScene = {
   create: function () {
+    //creacion de array de balas
     var bullets= [];
     for (var i=0; i<100; i++){
       bullets.push(new shot(this.game));
-      
+      bullets[i].kill();
     }
-    console.log(bullets);
-    pool=new Pool(this.game, bullets);
+    //creacion del pool de balas 
+    shots=new ShotsPool(this.game, bullets);
+    //creacion del mapa
     map= this.game.add.tilemap('tilemap');
     map.addTilesetImage('tileset');
     layer= map.createLayer('Capa de Patrones 1');
     map.setCollision([1,2]);
     layer.resizeWorld();
-   player= new Inkling (this.game, this.game.world.centerX, 0, 'Inkling',400,-600, 'bullet');
+    //creacion del jugador
+   player= new Inkling (this.game, this.game.world.centerX, 0, 'Inkling',400,-600);
   
+   //seguimiento de cámara(temporal)
    this.game.camera.follow(player);
+   //activacion del sistema de físicas
    this.physics.startSystem(Phaser.Physics.ARCADE);
    
   },
   update: function () {
-
+    //colisiones jugador, mapa
     this.game.physics.arcade.collide(player,layer);
-    player.update(pool);
+
+    //actualizacion de estado del jugador
+    player.update(shots);
+    
+    //colisiones balas con mapa
     self=this;
-    pool.forEachAlive(function(item){ item.update(); self.game.physics.arcade.collide(item, self.game.layer, item.kill()); });
-    if(this.game.input.keyboard.isDown(Phaser.Keyboard.O)) map.replace(1,2);
-    else if(this.game.input.keyboard.isDown(Phaser.Keyboard.W)) map.replace(2,1);
+    shots.forEachAlive(function(each){self.game.physics.arcade.collide(each, layer, function(){each.kill();})});
+
   }
 
 };

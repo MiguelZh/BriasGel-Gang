@@ -42,11 +42,11 @@ var shot=require('./Shot.js');
     //creacion del pool de balas 
     shots=new ShotsPool(this.game, bullets);
     //creacion del mapa
-    map= this.game.add.tilemap('tilemap');
-    map.addTilesetImage('tileset');
-    layer= map.createLayer('Capa de Patrones 1');
-    map.setCollision([1,2]);
-    layer.resizeWorld();
+    this.map= this.game.add.tilemap('tilemap');
+    this.map.addTilesetImage('tileset');
+    this.layer= this.map.createLayer('Capa de Patrones 1');
+    this.map.setCollision([1,2]);
+    this.layer.resizeWorld();
     //creacion del jugador
    player= new Inkling (this.game, this.game.world.centerX, 0, 'Inkling',400,-600);
   
@@ -58,14 +58,21 @@ var shot=require('./Shot.js');
   },
   update: function () {
     //colisiones jugador, mapa
-    this.game.physics.arcade.collide(player,layer);
+    this.game.physics.arcade.collide(player,this.layer);
 
     //actualizacion de estado del jugador
     player.update(shots);
     
     //colisiones balas con mapa
     self=this;
-    shots.forEachAlive(function(each){self.game.physics.arcade.collide(each, layer, function(){each.kill();})});
+    shots.forEachAlive(function(each){self.game.physics.arcade.collide(each, self.layer, function(){ 
+    console.log(Math.floor(each.x/64))
+    console.log(Math.floor(each.y/64))
+    var dir=0;
+    if(each.scale.x>0) dir=1;
+    else if(each.scale.x<0) dir=-1;
+    console.log(dir)
+    self.map.replace(1,2, Math.floor(each.x/64)+dir, Math.floor((each.y/64))+1, 1,1, self.layer); each.kill();})});
 
   }
 

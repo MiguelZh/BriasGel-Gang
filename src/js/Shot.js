@@ -45,6 +45,7 @@ Shot.prototype.initialize=function(x, y,sprite,dir){
 Shot.prototype.update=function(){
     //ajuste de rotación a la direccion de la bala
     this.rotation=Math.atan((this.body.velocity.y)/this.body.velocity.x);
+
 }
 
 

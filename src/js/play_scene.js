@@ -69,7 +69,17 @@ var PlayScene = {
 
     //actualizacion de estado del jugador
     player.update(shots);
-    this.game.debug.body(player)
+    this.game.debug.body(player);
+
+    var TileGround= this.map.getTile(Math.floor(player.x/64), Math.floor((player.y+(player.height/2)+15)/64));
+    if(TileGround!==null){
+      if(TileGround.index===2){
+        player.squidspeed=player.kidspeed*1.75;
+      }
+      else player.squidspeed=player.kidspeed*0.5;
+    }
+  
+
 
     //colisiones balas con mapa
     self = this;

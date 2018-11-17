@@ -10,7 +10,7 @@ var Shot = function (game) {
     this.game.physics.arcade.enable(this);
 
 
-    this.body.outOfBoundsKill();
+    this.body.outOfBoundsKill=true;
 
     //Sprite
     this.game.add.existing(this);

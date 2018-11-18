@@ -75,6 +75,7 @@ var PlayScene = {
     //Colisiones con tile pintado
     var TileGround= this.map.getTile(Math.floor(player.x/64), Math.floor((player.y+(player.height/2)+15)/64));
     if(TileGround!==null) player.Swim(TileGround.index===2);
+    else player.Swim(false);
     
     //colisiones balas con mapa
     self = this;

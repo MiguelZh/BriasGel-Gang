@@ -13,7 +13,7 @@ var Inkling = function (game, x, y, sprite, speed, jump) {
   this._ammo = 100;
   this.iskid = true;
   this.shooting = false;
-  this.swimming=false;
+  this.isswimming=false;
   this.nextfire = 0;
 
 
@@ -67,8 +67,8 @@ Inkling.prototype.update = function (Pool) {
   var dir = 0;
 
   //movimiento
-  if (this.iskid) this._speed = this.kidspeed;
-  else if(!this.swimming) this._speed = this.squidspeed;
+  if (this.iskid || !this.body.onFloor()) this._speed = this.kidspeed;
+  else if(!this.isswimming) this._speed = this.squidspeed;
   else this._speed=this.swimspeed;
 
   if (this.game.input.keyboard.isDown(this.mrightkey)) dir = 1;
@@ -80,7 +80,9 @@ Inkling.prototype.update = function (Pool) {
 
   //transformación
   if (this.game.input.keyboard.isDown(this.transkey)) this.iskid = false;
-  else this.iskid = true;
+  else this.iskid=true;
+    
+  
 
   //disparo
   if (this.game.input.keyboard.isDown(this.shootkey) && this.iskid) {
@@ -97,12 +99,14 @@ Inkling.prototype.update = function (Pool) {
 }
 
 Inkling.prototype.Swim=function(bool){
-  this.swimming=bool;
+  this.isswimming=bool;
 }
 
 Inkling.prototype.HurtBoxShift=function(){
-  if(!this.iskid)
-    this.body.setSize(35,5,5,45);
+  if(!this.iskid){
+    if(this.isswimming) this.body.setSize(40,5,5,41);
+    else this.body.setSize(35,5,5,45);
+  }
   else this.body.setSize(30,42,10,11);
 
 }

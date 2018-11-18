@@ -30,9 +30,12 @@ var shot=require('./Shot.js');
   var PlayScene = {
   create: function () {
     //barra de vida en pantalla
-    var barConfig = {x: 200, y: 100};
-    this.myHealthBar = new HealthBar(this.game, barConfig);
-    this.myHealthBar.setPercent(50); // baja la barra de vida
+    var barHealth = {x: 200, y: 100};
+    this.barHealth = new HealthBar(this.game, barHealth);
+    this.barHealth.setPercent(50); // baja la barra de vida
+    var barAmmo = {x: 200, y: 150};
+    this.barAmmo = new HealthBar(this.game,barAmmo);
+    this.barAmmo.setPercent(85);
 
 
 

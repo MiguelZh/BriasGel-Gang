@@ -5,14 +5,17 @@ var Inkling = function (game, x, y, sprite, speed, jump) {
   //Atributos
   Phaser.Sprite.call(this, game, x, y, sprite);
   this.kidspeed = speed;
-  this.squidspeed = this.kidspeed * 0.5;
+  this.squidspeed = speed * 0.5;
+  this.swimspeed=speed*1.75;
   this._speed = speed;
   this._jump = jump;
   this._health = 100;
   this._ammo = 100;
   this.iskid = true;
   this.shooting = false;
+  this.swimming=false;
   this.nextfire = 0;
+
 
 
 
@@ -29,6 +32,7 @@ var Inkling = function (game, x, y, sprite, speed, jump) {
   this.body.gravity.y = 800;
   this.body.velocity.x = 0;
   this.body.velocity.y = 0;
+  
 
   //Animaciones
   this.game.add.existing(this);
@@ -47,6 +51,7 @@ var Inkling = function (game, x, y, sprite, speed, jump) {
 
   this.anchor.setTo(0.5, 0.5);
   this.scale.setTo(this.scale.x * 2, this.scale.y * 2);
+ 
 
 }
 Inkling.prototype = Object.create(Phaser.Sprite.prototype);
@@ -63,7 +68,9 @@ Inkling.prototype.update = function (Pool) {
 
   //movimiento
   if (this.iskid) this._speed = this.kidspeed;
-  else this._speed = this.squidspeed;
+  else if(!this.swimming) this._speed = this.squidspeed;
+  else this._speed=this.swimspeed;
+
   if (this.game.input.keyboard.isDown(this.mrightkey)) dir = 1;
   else if (this.game.input.keyboard.isDown(this.mleftkey)) dir = -1;
   this.Movement(dir);
@@ -85,6 +92,10 @@ Inkling.prototype.update = function (Pool) {
   //animar
   this.Animator();
 
+}
+
+Inkling.prototype.Swim=function(bool){
+  this.swimming=bool;
 }
 
 Inkling.prototype.Animator = function () {

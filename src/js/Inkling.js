@@ -91,11 +91,20 @@ Inkling.prototype.update = function (Pool) {
 
   //animar
   this.Animator();
+  this.HurtBoxShift();
+
 
 }
 
 Inkling.prototype.Swim=function(bool){
   this.swimming=bool;
+}
+
+Inkling.prototype.HurtBoxShift=function(){
+  if(!this.iskid)
+    this.body.setSize(35,5,5,45);
+  else this.body.setSize(30,42,10,11);
+
 }
 
 Inkling.prototype.Animator = function () {
@@ -145,18 +154,17 @@ Inkling.prototype.Damage = function (damage) {
 
 
 Inkling.prototype.Fire = function (Pool) {
-  var velocitymul;//aumento de velocidad de la bala si se esta moviendo
-
+   //aumento de velocidad de la bala si se esta moviendo
+  
   if (this.game.time.now > this.nextfire) {//si ha pasado suficiente tiempo entre disparos
     this.nextfire = this.game.time.now + this.FireRate;
-    if (this.body.velocity.x !== 0) velocitymul = 1.2;
-    else velocitymul = 1;
+    
     if (this.scale.x < 0) {
-      Pool.spawn(this.x - this.scale.x - 30, this.y, 'bullet', -1 * velocitymul);//disparo hacia la izquierda
+      Pool.spawn(this.x - this.scale.x - 30, this.y, 'bullet', -1 );//disparo hacia la izquierda
     }
     else {
 
-      Pool.spawn(this.x + this.scale.x + 30, this.y, 'bullet', 1 * velocitymul);//disparo hacia la derecha
+      Pool.spawn(this.x + this.scale.x + 30, this.y, 'bullet', 1 );//disparo hacia la derecha
     }
   }
 }

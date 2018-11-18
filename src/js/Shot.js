@@ -37,15 +37,12 @@ Shot.prototype.initialize = function (x, y, sprite, dir) {
     this.body.velocity.x = this.Speed * dir;
     if (this.body.velocity.x * this.scale.x < 0) this.scale.x = this.scale.x * -1;
     this.body.gravity.y = this.Fall;
-
-
 }
 
 
 Shot.prototype.update = function () {
     //ajuste de rotación a la direccion de la bala
     this.rotation = Math.atan((this.body.velocity.y) / this.body.velocity.x);
-
 }
 
 

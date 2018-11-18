@@ -79,6 +79,7 @@ var PlayScene = {
     //colisiones balas con mapa
     self = this;
     shots.forEachAlive(function (each) {
+      self.game.debug.body(each);
       self.game.physics.arcade.collide(each, self.layer, function () {
         var dir = 0;
         var rot = 0;

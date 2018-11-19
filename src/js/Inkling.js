@@ -6,15 +6,18 @@ var Inkling = function (game, x, y, sprite, speed, jump) {
   Phaser.Sprite.call(this, game, x, y, sprite);
   this.kidspeed = speed;
   this.squidspeed = speed * 0.5;
-  this.swimspeed=speed*1.75;
+  this.swimspeed = speed * 1.85;
   this._speed = speed;
   this._jump = jump;
   this._health = 100;
   this._ammo = 100;
   this.iskid = true;
   this.shooting = false;
-  this.isswimming=false;
+  this.isswimming = false;
   this.nextfire = 0;
+  this.timeheals = 0;
+  this.timerecharge=0;
+  this.hittime;
 
 
 
@@ -32,7 +35,7 @@ var Inkling = function (game, x, y, sprite, speed, jump) {
   this.body.gravity.y = 800;
   this.body.velocity.x = 0;
   this.body.velocity.y = 0;
-  
+
 
   //Animaciones
   this.game.add.existing(this);
@@ -47,11 +50,13 @@ var Inkling = function (game, x, y, sprite, speed, jump) {
   this.animations.add('fall', [70, 71], 9, true);
   this.animations.add('shootidle', [41, 42, 43, 44], 9, false);
   this.animations.add('shootrun', [50, 51, 52, 53, 54, 55, 56, 57], 9, false);
+  this.animations.add('swim', [90, 91, 92, 93], 9, true);
+  this.animations.add('swimidle', [90, 91], 9, true);
 
 
   this.anchor.setTo(0.5, 0.5);
   this.scale.setTo(this.scale.x * 2, this.scale.y * 2);
- 
+
 
 }
 Inkling.prototype = Object.create(Phaser.Sprite.prototype);
@@ -59,6 +64,9 @@ Inkling.prototype.constructor = Inkling;
 
 //Atributos Estáticos
 Inkling.prototype.FireRate = 200;
+Inkling.prototype.RegenRate = 500;
+Inkling.prototype.RegenLatency = 1000;
+Inkling.prototype.RechargeRate=200;
 
 
 //Métodos Inkling
@@ -68,8 +76,8 @@ Inkling.prototype.update = function (Pool) {
 
   //movimiento
   if (this.iskid || !this.body.onFloor()) this._speed = this.kidspeed;
-  else if(!this.isswimming) this._speed = this.squidspeed;
-  else this._speed=this.swimspeed;
+  else if (!this.isswimming) this._speed = this.squidspeed;
+  else this._speed = this.swimspeed;
 
   if (this.game.input.keyboard.isDown(this.mrightkey)) dir = 1;
   else if (this.game.input.keyboard.isDown(this.mleftkey)) dir = -1;
@@ -80,9 +88,9 @@ Inkling.prototype.update = function (Pool) {
 
   //transformación
   if (this.game.input.keyboard.isDown(this.transkey)) this.iskid = false;
-  else this.iskid=true;
-    
-  
+  else this.iskid = true;
+
+
 
   //disparo
   if (this.game.input.keyboard.isDown(this.shootkey) && this.iskid) {
@@ -91,32 +99,40 @@ Inkling.prototype.update = function (Pool) {
   }
   else this.shooting = false;
 
+  if(this.isswimming) this.Recharge();
   //animar
   this.Animator();
   this.HurtBoxShift();
-
-
+  this.Heal();
 }
 
-Inkling.prototype.Swim=function(bool){
-  this.isswimming=bool;
+Inkling.prototype.Swim = function (bool) {
+  this.isswimming = bool && !this.iskid;
 }
 
-Inkling.prototype.HurtBoxShift=function(){
-  if(!this.iskid){
-    if(this.isswimming) this.body.setSize(40,5,5,41);
-    else this.body.setSize(35,5,5,45);
+Inkling.prototype.HurtBoxShift = function () {
+  if (!this.iskid) {
+    if (this.isswimming) this.body.setSize(30, 3, 5, 50);
+    else this.body.setSize(30, 7, 10, 45);
   }
-  else this.body.setSize(30,42,10,11);
+  else this.body.setSize(30, 42, 10, 11);
 
 }
 
 Inkling.prototype.Animator = function () {
   //Animaciones del calamar
   if (!this.iskid) {
-    if (this.body.velocity.x === 0 && this.body.velocity.y === 0)
-      this.animations.play('squididle', 3, false);
-    else this.animations.play('movesquid', 9, true);
+    //animaciones en tierra
+    if (!this.isswimming) {
+      if (this.body.velocity.x === 0 && this.body.velocity.y === 0)
+        this.animations.play('squididle', 3, false);
+      else this.animations.play('movesquid', 9, true);
+    }
+    else {
+      //animaciones nadando
+      if (this.body.velocity.x === 0) this.animations.play('swimidle', 3, false);
+      else this.animations.play('swim', 9, true);
+    }
   }
   //Animaciones de la niña
   else {
@@ -152,23 +168,52 @@ Inkling.prototype.Movement = function (dir) {
   this.body.velocity.x = dir * this._speed;
 }
 
+Inkling.prototype.Heal = function () {
+  if (this._health < 100) {
+    var timesincelasthit = this.game.time.now - this.hit;
+    var timebetweenheals = this.game.time.now - this.timeheals;
+
+    if (timebetweenheals >= this.RegenRate && timesincelasthit >= this.RegenLatency) {
+      this._health += 5;
+      this.timeheals = this.game.time.now;
+    }
+  }
+}
+
 Inkling.prototype.Damage = function (damage) {
-  this._health = this._health - damage;//ser dañado
+  this._health -= damage;//ser dañado
+  this.timeheals = this.game.time.now;
+  this.hit = this.game.time.now;
+}
+
+Inkling.prototype.AmmoDecrease = function () {
+  this._ammo -= 5;
+}
+
+Inkling.prototype.Recharge = function () {
+  if(this._ammo<100){
+    var timebetweenrecharges=this.game.time.now - this.timerecharge;
+    if(timebetweenrecharges >= this.RechargeRate){
+      this._ammo+=5;
+      this.timerecharge=this.game.time.now;
+    }
+  }
 }
 
 
 Inkling.prototype.Fire = function (Pool) {
-   //aumento de velocidad de la bala si se esta moviendo
-  
-  if (this.game.time.now > this.nextfire) {//si ha pasado suficiente tiempo entre disparos
-    this.nextfire = this.game.time.now + this.FireRate;
-    
-    if (this.scale.x < 0) {
-      Pool.spawn(this.x - this.scale.x - 30, this.y, 'bullet', -1 );//disparo hacia la izquierda
-    }
-    else {
+  //aumento de velocidad de la bala si se esta moviendo
+  if(this._ammo>0){
+    if (this.game.time.now > this.nextfire) {//si ha pasado suficiente tiempo entre disparos
+      this.nextfire = this.game.time.now + this.FireRate;
+      this.AmmoDecrease();
 
-      Pool.spawn(this.x + this.scale.x + 30, this.y, 'bullet', 1 );//disparo hacia la derecha
+      if (this.scale.x < 0) {
+        Pool.spawn(this.x - this.scale.x - 30, this.y, 'bullet', -1);//disparo hacia la izquierda
+      }
+      else {
+        Pool.spawn(this.x + this.scale.x + 30, this.y, 'bullet', 1);//disparo hacia la derecha
+      }
     }
   }
 }

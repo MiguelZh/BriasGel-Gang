@@ -71,6 +71,8 @@ var PlayScene = {
     player.update(shots);
     this.game.debug.bodyInfo(player, 0, 0);
     this.game.debug.body(player);
+    console.log("Health: " + player._health);
+    console.log("Ammo: " + player._ammo);
 
     //Colisiones con tile pintado
     var TileGround= this.map.getTile(Math.floor(player.x/64), Math.floor((player.y+(player.height/2)+15)/64));
@@ -92,6 +94,7 @@ var PlayScene = {
 
         self.map.replace(1, 2, Math.floor((each.x + dir * 15 + ((each.width / 2))) / 64), Math.floor((each.y + dir * rot * (each.height / 2) + 15 * rot * dir) / 64), 1, 1, self.layer);
         each.kill();
+        player.Damage(5);//prueba de sistema de daño
       })
     });
 

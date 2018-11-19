@@ -45,8 +45,4 @@ Shot.prototype.update = function () {
     this.rotation = Math.atan((this.body.velocity.y) / this.body.velocity.x);
 }
 
-
-
-
-
 module.exports = Shot;

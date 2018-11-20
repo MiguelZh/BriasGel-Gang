@@ -1,12 +1,12 @@
 'use strict'
 var shot = require('./Shot.js')
 
-var Inkling = function (game, x, y, sprite, speed, jump) {
+var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM, SHOOT, color) {
   //Atributos
   Phaser.Sprite.call(this, game, x, y, sprite);
   this.kidspeed = speed;
   this.squidspeed = speed * 0.5;
-  this.swimspeed = speed * 1.85;
+  this.swimspeed = speed * 1.95;
   this._speed = speed;
   this._jump = jump;
   this._health = 100;
@@ -18,16 +18,17 @@ var Inkling = function (game, x, y, sprite, speed, jump) {
   this.timeheals = 0;
   this.timerecharge=0;
   this.hittime;
+  this.color=color;
 
 
 
 
   //Controles
-  this.mrightkey = Phaser.Keyboard.RIGHT;
-  this.mleftkey = Phaser.Keyboard.LEFT;
-  this.jumpkey = Phaser.Keyboard.UP;
-  this.transkey = Phaser.Keyboard.DOWN;
-  this.shootkey = Phaser.Keyboard.A;
+  this.mrightkey = RIGHT;
+  this.mleftkey = LEFT;
+  this.jumpkey = JUMP;
+  this.transkey = SWIM;
+  this.shootkey = SHOOT;
 
   //Físicas
   this.game.physics.arcade.enable(this);
@@ -209,10 +210,10 @@ Inkling.prototype.Fire = function (Pool) {
       this.AmmoDecrease();
 
       if (this.scale.x < 0) {
-        Pool.spawn(this.x - this.scale.x - 30, this.y, 'bullet', -1);//disparo hacia la izquierda
+        Pool.spawn(this.x - this.scale.x - 35, this.y, 'bullet', -1, this.color);//disparo hacia la izquierda
       }
       else {
-        Pool.spawn(this.x + this.scale.x + 30, this.y, 'bullet', 1);//disparo hacia la derecha
+        Pool.spawn(this.x + this.scale.x + 35, this.y, 'bullet', 1,);//disparo hacia la derecha
       }
     }
   }

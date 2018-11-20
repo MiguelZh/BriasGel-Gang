@@ -10,7 +10,7 @@ var Shot = function (game) {
     this.game.physics.arcade.enable(this);
 
 
-    this.body.outOfBoundsKill=true;
+    this.body.outOfBoundsKill = true;
 
     //Sprite
     this.game.add.existing(this);
@@ -28,7 +28,8 @@ Shot.prototype.Fall = 400;
 Shot.prototype.Damage = 10;
 
 //Inicialización de la bala (llamada al salir del pool)
-Shot.prototype.initialize = function (x, y, sprite, dir) {
+Shot.prototype.initialize = function (x, y, sprite, dir, color) {
+    this.color = color;
     this.body.velocity.y = 0;//reseteo de la velocidad
     this.body.velocity.x = 0;
     this.x = x;
@@ -37,6 +38,7 @@ Shot.prototype.initialize = function (x, y, sprite, dir) {
     this.body.velocity.x = this.Speed * dir;
     if (this.body.velocity.x * this.scale.x < 0) this.scale.x = this.scale.x * -1;
     this.body.gravity.y = this.Fall;
+
 }
 
 

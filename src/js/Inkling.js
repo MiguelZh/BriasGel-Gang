@@ -96,7 +96,7 @@ Inkling.prototype.update = function (Pool) {
   //disparo
   if (this.game.input.keyboard.isDown(this.shootkey) && this.iskid) {
     this.shooting = true;
-    this.Fire(Pool);
+    this.Fire(Pool,this.color);
   }
   else this.shooting = false;
 
@@ -202,18 +202,22 @@ Inkling.prototype.Recharge = function () {
 }
 
 
-Inkling.prototype.Fire = function (Pool) {
+Inkling.prototype.Fire = function (Pool,color) {
   //aumento de velocidad de la bala si se esta moviendo
+  console.log(color);
+  var bullet;
+  if(color==1) bullet = "bullet2";
+  else bullet = "bullet";
   if(this._ammo>0){
     if (this.game.time.now > this.nextfire) {//si ha pasado suficiente tiempo entre disparos
       this.nextfire = this.game.time.now + this.FireRate;
       this.AmmoDecrease();
 
       if (this.scale.x < 0) {
-        Pool.spawn(this.x - this.scale.x - 35, this.y, 'bullet', -1, this.color);//disparo hacia la izquierda
+        Pool.spawn(this.x - this.scale.x - 35, this.y, bullet, -1, this.color);//disparo hacia la izquierda
       }
       else {
-        Pool.spawn(this.x + this.scale.x + 35, this.y, 'bullet', 1,);//disparo hacia la derecha
+        Pool.spawn(this.x + this.scale.x + 35, this.y, bullet, 1,);//disparo hacia la derecha
       }
     }
   }

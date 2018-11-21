@@ -50,7 +50,7 @@ var PlayScene = {
 
     //creacion de jugadores
     player1 = new Inkling(this.game, this.game.world.centerX, 0, 'Inkling', 400, -600, Phaser.Keyboard.RIGHT, Phaser.Keyboard.LEFT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.CONTROL, 0);
-    player2 = new Inkling(this.game, 400, this.game.world.centerY, 'Inkling', 400, -600, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, 1);
+    player2 = new Inkling(this.game, 400, this.game.world.centerY, 'Inkling2', 400, -600, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, 1);
     player1.name = 1;
     player2.name = 2;
     //guardado en array de jugadores

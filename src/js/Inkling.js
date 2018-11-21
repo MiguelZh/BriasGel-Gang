@@ -22,7 +22,6 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
 
 
 
-
   //Controles
   this.mrightkey = RIGHT;
   this.mleftkey = LEFT;
@@ -56,7 +55,7 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
 
 
   this.anchor.setTo(0.5, 0.5);
-  this.scale.setTo(this.scale.x * 1.5, this.scale.y * 1.5);
+  this.scale.setTo(this.scale.x * 1.1, this.scale.y * 1.1);
 
 
 }
@@ -210,10 +209,10 @@ Inkling.prototype.Fire = function (Pool) {
       this.AmmoDecrease();
 
       if (this.scale.x < 0) {
-        Pool.spawn(this.x - this.scale.x - 20, this.y, 'bullet', -1, this.color);//disparo hacia la izquierda
+        Pool.spawn(this.x - this.scale.x, this.y, 'bullet', -1, this.color);//disparo hacia la izquierda
       }
       else {
-        Pool.spawn(this.x + this.scale.x + 20, this.y, 'bullet', 1);//disparo hacia la derecha
+        Pool.spawn(this.x + this.scale.x, this.y, 'bullet', 1);//disparo hacia la derecha
       }
     }
   }

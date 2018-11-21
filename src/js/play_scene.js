@@ -48,8 +48,8 @@ var PlayScene = {
     this.map.setCollision([1, 2]);
 
     //creacion de jugadores
-    player1 = new Inkling(this.game, this.game.world.centerX, 0, 'Inkling', 300, -500, Phaser.Keyboard.RIGHT, Phaser.Keyboard.LEFT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.CONTROL, 0);
-    player2 = new Inkling(this.game, 400, this.game.world.centerY, 'Inkling', 300, -500, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, 1);
+    player1 = new Inkling(this.game, this.game.world.centerX, 0, 'Inkling', 300, -400, Phaser.Keyboard.RIGHT, Phaser.Keyboard.LEFT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.CONTROL, 0);
+    player2 = new Inkling(this.game, 400, this.game.world.centerY, 'Inkling', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, 1);
     player1.name = 1;
     player2.name = 2;
     //guardado en array de jugadores
@@ -84,31 +84,29 @@ var PlayScene = {
           player.Damage(5);
           bullet.kill();
         });
-
       });
-
-
 
     });
 
     //colisiones balas con mapa
     shots.forEachAlive(function (each) {
+      var TileOnSpawn = self.map.getTileWorldXY(each.x, each.y);
+      if (TileOnSpawn !== null) { self.map.replace(1,2, TileOnSpawn.x, TileOnSpawn.y, 1, 1, self.layer);
+        each.kill(); }
       self.game.physics.arcade.collide(each, self.layer, function () {
 
         var dir = 0;
-        var rot = 0;
         if (each.scale.x >= 0) dir = 1;
         else if (each.scale.x < 0) dir = -1;
-        if (each.rotation > 0) rot = 1;
-        else if (each.rotation < 0) rot = -1;
+
         //pintar tile(cambia el index del tile por uno de color)
         var TileCollided = self.map.getTileWorldXY(each.x + dir * self.map.tileWidth, each.y);
         var TileCollided2 = self.map.getTileWorldXY(each.x + dir * self.map.tileWidth, each.y + each.height / 2 + 5);
         var TileCollided3 = self.map.getTileWorldXY(each.x + dir * self.map.tileWidth, each.y - each.height / 2 - 5);
         var TileCollided4 = self.map.getTileWorldXY(each.x + each.width / 2 + 5, each.y + each.height / 2 + 5);
-        var TileCollided4 = self.map.getTileWorldXY(each.x + each.width / 2 + 5, each.y - each.height / 2 - 5);
-        var TileCollided5 = self.map.getTileWorldXY(each.x - each.width / 2 - 5, each.y + each.height / 2 + 5);
-        var TileCollided6 = self.map.getTileWorldXY(each.x - each.width / 2 - 5, each.y - each.height / 2 - 5);
+        var TileCollided5 = self.map.getTileWorldXY(each.x + each.width / 2 + 5, each.y - each.height / 2 - 5);
+        var TileCollided6 = self.map.getTileWorldXY(each.x - each.width / 2 - 5, each.y + each.height / 2 + 5);
+        var TileCollided7 = self.map.getTileWorldXY(each.x - each.width / 2 - 5, each.y - each.height / 2 - 5);
 
         if (TileCollided !== null) self.map.replace(1, 2, TileCollided.x, TileCollided.y, 1, 1, self.layer);
         if (TileCollided2 !== null) self.map.replace(1, 2, TileCollided2.x, TileCollided2.y, 1, 1, self.layer);
@@ -116,11 +114,11 @@ var PlayScene = {
         if (TileCollided4 !== null) self.map.replace(1, 2, TileCollided4.x, TileCollided4.y, 1, 1, self.layer);
         if (TileCollided5 !== null) self.map.replace(1, 2, TileCollided5.x, TileCollided5.y, 1, 1, self.layer);
         if (TileCollided6 !== null) self.map.replace(1, 2, TileCollided6.x, TileCollided6.y, 1, 1, self.layer);
+        if (TileCollided7 !== null) self.map.replace(1, 2, TileCollided7.x, TileCollided7.y, 1, 1, self.layer);
 
         each.kill();
+      });
 
-
-      })
     });
 
   }

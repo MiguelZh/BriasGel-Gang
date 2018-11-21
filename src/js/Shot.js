@@ -15,7 +15,7 @@ var Shot = function (game) {
     //Sprite
     this.game.add.existing(this);
     this.anchor.setTo(0.5, 0.5);
-    this.scale.setTo(this.scale.x * 1.2, this.scale.y * 1.2);
+    this.scale.setTo(this.scale.x * 0.8, this.scale.y * 0.8);
     this.rotation = Math.atan((this.body.velocity.y) / this.body.velocity.x);
 
 }

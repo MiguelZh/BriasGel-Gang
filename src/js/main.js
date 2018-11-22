@@ -23,18 +23,24 @@ var PreloaderScene = {
 
     // TODO: load here the assets for the game
     this.game.load.image('logo', 'images/phaser.png');
-    this.game.load.spritesheet('Inklingo', 'images/SpriteSheetInkling.png',50,53);
+    this.game.load.spritesheet('Inklingo', 'images/SpriteSheetInkling.png', 50, 53);
     this.game.load.spritesheet('Inklingp', 'images/SpriteSheetInkling2.png', 50, 53);
     this.game.load.tilemap('tilemap', 'images/tilemap.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('tileset', 'images/tileset.png');
     this.game.load.image('bulleto', 'images/BalaPintura.png');
     this.game.load.image('bulletp', 'images/BalaPintura2.png');
+    this.game.load.image('hud', 'images/FondoInterfaz.png');
+    this.game.load.image('backgroundor', 'images/OrangeBackground.png');
+    this.game.load.image('backgroundpu', 'images/PurpleBackground.png');
+    this.game.load.image('healthind', 'images/HealthIcon.png');
+    this.game.load.image('deadicon', 'images/F.png');
+  
 
   },
 
   create: function () {
     this.game.state.start('play');
-    
+
   }
 };
 
@@ -44,8 +50,8 @@ window.onload = function () {
     width: 800,
     height: 600,
     parent: 'game',
-    input:{
-      gamepad:true,
+    input: {
+      gamepad: true,
     },
   });
 

@@ -25,7 +25,7 @@ Shot.prototype.constructor = Shot;
 //Atributos estáticos
 Shot.prototype.Speed = 700;
 Shot.prototype.Fall = 400;
-Shot.prototype.Damage = 10;
+Shot.prototype.Damage = 40;
 
 //Inicialización de la bala (llamada al salir del pool)
 Shot.prototype.initialize = function (x, y, sprite, dir, color) {

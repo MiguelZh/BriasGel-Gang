@@ -19,8 +19,8 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   this.timerecharge = 0;
   this.hittime;
   this.color = color;
-  if(this.color===2)this.bullet='bulleto';
-  else this.bullet='bulletp';
+  if (this.color === 2) this.bullet = 'bulleto';
+  else this.bullet = 'bulletp';
 
 
 
@@ -214,7 +214,7 @@ Inkling.prototype.Fire = function (Pool) {
         Pool.spawn(this.x - this.scale.x, this.y, this.bullet, -1, this.color);//disparo hacia la izquierda
       }
       else {
-        Pool.spawn(this.x + this.scale.x, this.y, this.bullet , 1, this.color);//disparo hacia la derecha
+        Pool.spawn(this.x + this.scale.x, this.y, this.bullet, 1, this.color);//disparo hacia la derecha
       }
     }
   }

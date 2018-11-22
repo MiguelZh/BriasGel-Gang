@@ -23,10 +23,13 @@ var PreloaderScene = {
 
     // TODO: load here the assets for the game
     this.game.load.image('logo', 'images/phaser.png');
-    this.game.load.spritesheet('Inkling', 'images/SpriteSheetInkling.png',50,53);
-    this.game.load.tilemap('tilemap', 'images/mapaprueba.json', null, Phaser.Tilemap.TILED_JSON);
+    this.game.load.spritesheet('Inklingo', 'images/SpriteSheetInkling.png',50,53);
+    this.game.load.spritesheet('Inklingp', 'images/SpriteSheetInkling2.png', 50, 53);
+    this.game.load.tilemap('tilemap', 'images/tilemap.json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('tileset', 'images/tileset.png');
-    this.game.load.image('bullet', 'images/BalaPintura.png');
+    this.game.load.image('bulleto', 'images/BalaPintura.png');
+    this.game.load.image('bulletp', 'images/BalaPintura2.png');
+
   },
 
   create: function () {

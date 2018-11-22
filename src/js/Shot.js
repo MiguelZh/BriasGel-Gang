@@ -2,7 +2,7 @@
 
 var Shot = function (game) {
 
-    Phaser.Sprite.call(this, game, game.world.centerX, game.world.centerY, 'bullet');
+    Phaser.Sprite.call(this, game, game.world.centerX, game.world.centerY, 'bulletp');
 
 
 
@@ -34,7 +34,7 @@ Shot.prototype.initialize = function (x, y, sprite, dir, color) {
     this.body.velocity.x = 0;
     this.x = x;
     this.y = y;
-    this.sprite = sprite;
+    this.loadTexture(sprite, 0);
     this.body.velocity.x = this.Speed * dir;
     if (this.body.velocity.x * this.scale.x < 0) this.scale.x = this.scale.x * -1;
     this.body.gravity.y = this.Fall;

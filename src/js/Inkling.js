@@ -7,6 +7,8 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   this.kidspeed = speed;
   this.squidspeed = speed * 0.5;
   this.swimspeed = speed * 1.95;
+  this.respawnpointx=x;
+  this.respawnpointy=y;
   this._speed = speed;
   this._jump = jump;
   this._health = 100;
@@ -184,10 +186,17 @@ Inkling.prototype.Heal = function () {
 
 Inkling.prototype.Damage = function (damage) {
   this._health -= damage;//ser dañado
+  if(this._health<=0) this.Respawn();
   this.timeheals = this.game.time.now;
   this.hit = this.game.time.now;
 }
 
+Inkling.prototype.Respawn= function(){
+  this._health=100;
+  this._ammo=100;
+  this.x=this.respawnpointx;
+  this.y=this.respawnpointy;
+}
 Inkling.prototype.AmmoDecrease = function () {
   this._ammo -= 5;
 }

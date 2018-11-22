@@ -35,9 +35,16 @@ var PreloaderScene = {
   }
 };
 
-
+//800, 600, Phaser.AUTO, 'game',true, false, false
 window.onload = function () {
-  var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game',null, false, false);
+  var game = new Phaser.Game({
+    width: 800,
+    height: 600,
+    parent: 'game',
+    input:{
+      gamepad:true,
+    },
+  });
 
   game.state.add('boot', BootScene);
   game.state.add('preloader', PreloaderScene);

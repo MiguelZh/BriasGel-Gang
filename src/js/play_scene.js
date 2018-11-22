@@ -27,7 +27,6 @@ var player2;
 var shots;
 var shot = require('./Shot.js');
 var players = [];
-
 var PlayScene = {
   ////////CREATE//////////
   create: function () {
@@ -46,10 +45,9 @@ var PlayScene = {
     this.map.addTilesetImage('tileset');
     this.layer = this.map.createLayer('Capa de Patrones 1');
     this.map.setCollision([1, 2]);
-
     //creacion de jugadores
-    player1 = new Inkling(this.game, this.game.world.centerX, 0, 'Inkling', 300, -400, Phaser.Keyboard.RIGHT, Phaser.Keyboard.LEFT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.CONTROL, 0);
-    player2 = new Inkling(this.game, 400, this.game.world.centerY, 'Inkling', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, 1);
+    player1 = new Inkling(this.game, this.game.world.centerX+150, 0, 'Inkling', 300, -400,Phaser.Keyboard.RIGHT,Phaser.Keyboard.LEFT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.CONTROL, 0);
+    player2 = new Inkling(this.game, this.game.world.centerX-150, this.game.world.centerY, 'Inkling', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, 1);
     player1.name = 1;
     player2.name = 2;
     //guardado en array de jugadores
@@ -58,7 +56,7 @@ var PlayScene = {
 
 
     //seguimiento de camara(temporal)
-    this.game.camera.follow(player1);
+    //this.game.camera.follow(player1);
 
     //activacion del sistema de físicas
     this.physics.startSystem(Phaser.Physics.ARCADE);

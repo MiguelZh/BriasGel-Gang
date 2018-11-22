@@ -113,9 +113,9 @@ Inkling.prototype.Swim = function (bool) {
 Inkling.prototype.HurtBoxShift = function () {
   if (!this.iskid) {
     if (this.isswimming) this.body.setSize(30, 3, 5, 50);
-    else this.body.setSize(30, 7, 10, 45);
+    else this.body.setSize(20, 7, 10, 45);
   }
-  else this.body.setSize(30, 42, 10, 11);
+  else this.body.setSize(20, 42, 10, 11);
 
 }
 

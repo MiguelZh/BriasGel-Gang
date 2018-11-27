@@ -4,6 +4,7 @@ var shot = require('./Shot.js')
 var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM, SHOOT, color) {
   //Atributos
   Phaser.Sprite.call(this, game, x, y, sprite);
+  this.smoothed=false;
   this.kidspeed = speed;
   this.squidspeed = speed * 0.5;
   this.swimspeed = speed * 1.95;
@@ -71,6 +72,7 @@ Inkling.prototype.FireRate = 200;
 Inkling.prototype.RegenRate = 500;
 Inkling.prototype.RegenLatency = 1000;
 Inkling.prototype.RechargeRate = 200;
+Inkling.prototype.AutoRechargeTime=4000;
 
 
 //Métodos Inkling
@@ -104,10 +106,11 @@ Inkling.prototype.update = function (Pool) {
   else this.shooting = false;
 
   if (this.isswimming) this.Recharge();
-  //animar
+  
   this.Animator();
   this.HurtBoxShift();
   this.Heal();
+  this.AutoRecharge();
 }
 
 Inkling.prototype.Swim = function (bool) {
@@ -199,6 +202,15 @@ Inkling.prototype.Respawn= function(){
 }
 Inkling.prototype.AmmoDecrease = function () {
   this._ammo -= 5;
+  if(this._ammo<=0){
+    this._ammo=0;
+    this.lastshot=this.game.time.now;
+  }
+}
+
+Inkling.prototype.AutoRecharge=function(){
+  if(this._ammo<=0 && this.game.time.now-this.lastshot>=this.AutoRechargeTime)
+    this._ammo=20;
 }
 
 Inkling.prototype.Recharge = function () {
@@ -218,13 +230,14 @@ Inkling.prototype.Fire = function (Pool) {
     if (this.game.time.now > this.nextfire) {//si ha pasado suficiente tiempo entre disparos
       this.nextfire = this.game.time.now + this.FireRate;
       this.AmmoDecrease();
-
-      if (this.scale.x < 0) {
-        Pool.spawn(this.x - this.scale.x, this.y, this.bullet, -1, this.color);//disparo hacia la izquierda
+      if(Pool!==undefined){
+        if (this.scale.x < 0) {
+          Pool.spawn(this.x - this.scale.x, this.y, this.bullet, -1, this.color);//disparo hacia la izquierda
+        }
+        else {
+          Pool.spawn(this.x + this.scale.x, this.y, this.bullet, 1, this.color);//disparo hacia la derecha
       }
-      else {
-        Pool.spawn(this.x + this.scale.x, this.y, this.bullet, 1, this.color);//disparo hacia la derecha
-      }
+    }
     }
   }
 }

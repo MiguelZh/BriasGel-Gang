@@ -23,9 +23,11 @@ ShotsPool.prototype.forEachAlive = function (funcion) {
 
 var Inkling = require('./Inkling.js');
 var Interface = require('./Interface.js');
-var HealthIcon = require('./HealthIcon.js');
+var GaugeIcon = require('./GaugeIcon.js');
 var healthplayer1;
 var healthplayer2;
+var ammoplayer1;
+var ammoplayer2;
 var player1;
 var player2;
 var shots;
@@ -55,8 +57,10 @@ var PlayScene = {
 
     //creacion de interfaz
     var backgroundhud = new Interface(this.game, this.game.world.centerX, 45, 'hud', 75, 300);
-     healthplayer1 = new HealthIcon(this.game, this.game.world.centerX - 70, 70, 'healthind', 'deadicon', 50, 45, player1);
-     healthplayer2 = new HealthIcon(this.game, this.game.world.centerX + 30, 70, 'healthind', 'deadicon', 50, 45, player2);
+     healthplayer1 = new GaugeIcon(this.game, this.game.world.centerX - 70, 70, 'healthind', 'deadicon', 50, 45, 50, 45, player1);
+     healthplayer2 = new GaugeIcon(this.game, this.game.world.centerX + 30, 70, 'healthind', 'deadicon', 50, 45, 50, 45, player2);
+     ammoplayer1= new GaugeIcon(this.game, this.game.world.centerX - 120, 70, 'ammoind', 'ammoind', 50, 30, 40, 20, player1);
+     //ammoplayer2= new GaugeIcon(this.game, this.game.world.centerX + 80, 70, 'ammoind', 30, 50, player2)
 
 
     //guardado en array de jugadores
@@ -76,8 +80,9 @@ var PlayScene = {
   ////////UPDATE/////////
   update: function () {
     self = this;
-    healthplayer1.Update();
-    healthplayer2.Update();
+    healthplayer1.Update(player1._health);
+    healthplayer2.Update(player2._health);
+    ammoplayer1.Update(player1._ammo);
 
     players.forEach(function (player) {
       //colisiones jugadores, mapa
@@ -91,12 +96,14 @@ var PlayScene = {
       //colisiones con disparos
       shots.forEachAlive(function (bullet) {
         if (bullet.color !== player.color) self.game.physics.arcade.collide(bullet, player, function () {
-          player.Damage(5);
+          player.Damage(bullet.Damage);
           bullet.kill();
         });
       });
 
     });
+
+    console.log(player1._health)
 
     //colisiones balas con mapa
     shots.forEachAlive(function (each) {

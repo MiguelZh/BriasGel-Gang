@@ -56,10 +56,11 @@ var PlayScene = {
     player2 = new Inkling(this.game, this.game.world.centerX - 150, this.game.world.centerY, 'Inklingp', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, 3);
 
     //creacion de interfaz
-    var backgroundhud = new Interface(this.game, this.game.world.centerX, 45, 'hud', 75, 300);
-     healthplayer1 = new GaugeIcon(this.game, this.game.world.centerX - 70, 70, 'healthind', 'deadicon', 50, 45, 50, 45, player1);
-     healthplayer2 = new GaugeIcon(this.game, this.game.world.centerX + 30, 70, 'healthind', 'deadicon', 50, 45, 50, 45, player2);
-     ammoplayer1= new GaugeIcon(this.game, this.game.world.centerX - 120, 70, 'ammoind', 'ammoind', 50, 30, 40, 20, player1);
+    var backgroundhud = new Interface(this.game, this.game.world.centerX, 50, 'hud', 60, 230);
+    backgroundhud.anchor.setTo(0.5, 0.5);
+     healthplayer1 = new GaugeIcon(this.game, this.game.world.centerX - 60, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX - 60, 70, player1);
+     healthplayer2 = new GaugeIcon(this.game, this.game.world.centerX + 20, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX + 20, 70, player2);
+     ammoplayer1= new GaugeIcon(this.game, this.game.world.centerX - 105, 70, 'ammoind', 'ammoind', 40, 20, 30, 20, this.game.world.centerX - 105, 65, player1);
      //ammoplayer2= new GaugeIcon(this.game, this.game.world.centerX + 80, 70, 'ammoind', 30, 50, player2)
 
 
@@ -103,7 +104,6 @@ var PlayScene = {
 
     });
 
-    console.log(player1._health)
 
     //colisiones balas con mapa
     shots.forEachAlive(function (each) {

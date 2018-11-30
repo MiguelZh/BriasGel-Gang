@@ -17,6 +17,7 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   this.iskid = true;
   this.shooting = false;
   this.isswimming = false;
+  this.isclimbing=false;
   this.nextfire = 0;
   this.timeheals = 0;
   this.timerecharge = 0;
@@ -73,15 +74,12 @@ Inkling.prototype.constructor = Inkling;
 Inkling.prototype.FireRate = 200;
 Inkling.prototype.RegenRate = 500;
 Inkling.prototype.RegenLatency = 1000;
-Inkling.prototype.ShotCost=2;
+Inkling.prototype.ShotCost=10;
 Inkling.prototype.RechargeRate = 200;
 Inkling.prototype.AutoRechargeTime=4000;
 Inkling.prototype.AngleUp=45;
 Inkling.prototype.AngleDown=-45;
 Inkling.prototype.NeutralAngle=0;
-
-
-
 
 //Métodos Inkling
 
@@ -95,12 +93,13 @@ Inkling.prototype.update = function (Pool) {
 
   if (this.game.input.keyboard.isDown(this.mrightkey)) dir = 1;
   else if (this.game.input.keyboard.isDown(this.mleftkey)) dir = -1;
-  this.Movement(dir);
+  if(this.isclimbing) this.MovementWall(dir);
+  else this.Movement(dir);
 
   //Salto
   if (this.body.onFloor() && this.game.input.keyboard.isDown(this.jumpkey)) this.body.velocity.y = this._jump;
 
-  //transformación
+  //transformacion
   if (this.game.input.keyboard.isDown(this.transkey)) this.iskid = false;
   else this.iskid = true;
 
@@ -121,8 +120,13 @@ Inkling.prototype.update = function (Pool) {
   this.AutoRecharge();
 }
 
-Inkling.prototype.Swim = function (bool) {
+Inkling.prototype.Swim = function (bool, grav) {
   this.isswimming = bool && !this.iskid;
+  if(this.isswimming){
+  if(grav!==0) this.isclimbing=true;
+  else this.isclimbing=false;
+  }
+  else this.isclimbing=false;
 }
 
 Inkling.prototype.HurtBoxShift = function () {
@@ -181,6 +185,15 @@ Inkling.prototype.Animator = function () {
 Inkling.prototype.Movement = function (dir) {
   if (this.scale.x * dir < 0) this.scale.x = -this.scale.x;//cambio de orientación de sprite
   this.body.velocity.x = dir * this._speed;
+  this.rotation=0;
+}
+
+Inkling.prototype.MovementWall= function(dir){
+  //if (this.scale.x * dir < 0) this.scale.x = -this.scale.x;//cambio de orientación de sprite
+  this.body.velocity.y = dir * this._speed;
+
+  this.rotation=dir*180;
+
 }
 
 Inkling.prototype.Heal = function () {

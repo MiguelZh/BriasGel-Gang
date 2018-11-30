@@ -24,16 +24,8 @@ ShotsPool.prototype.forEachAlive = function (funcion) {
 var Inkling = require('./Inkling.js');
 var Interface = require('./Interface.js');
 var GaugeIcon = require('./GaugeIcon.js');
-var healthplayer1;
-var healthplayer2;
-var ammoplayer1;
-var ammoplayer2;
-var player1;
-var player2;
-var shots;
 var shot = require('./Shot.js');
-var players = [];
-var middlepoint;
+
 var PlayScene = {
   ////////CREATE//////////
   create: function () {
@@ -45,7 +37,7 @@ var PlayScene = {
     }
 
     //creacion del pool de balas 
-    shots = new ShotsPool(this.game, bullets);
+    this.shots = new ShotsPool(this.game, bullets);
 
     //creacion del mapa
     this.map = this.game.add.tilemap('tilemap');
@@ -54,31 +46,32 @@ var PlayScene = {
     this.layer.resizeWorld();
     this.map.setCollision([1, 2]);
     //creacion de jugadores
-    player1 = new Inkling(this.game, this.game.world.centerX + 150, 0, 'Inklingo', 300, -400, Phaser.Keyboard.RIGHT, Phaser.Keyboard.LEFT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.CONTROL, Phaser.Keyboard.R, Phaser.Keyboard.T, 2);
-    player2 = new Inkling(this.game, this.game.world.centerX - 150, this.game.world.centerY, 'Inklingp', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.G, Phaser.Keyboard.L, 3);
+    this.player1 = new Inkling(this.game, this.game.world.centerX + 150, 0, 'Inklingo', 300, -400, Phaser.Keyboard.RIGHT, Phaser.Keyboard.LEFT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.CONTROL, Phaser.Keyboard.R, Phaser.Keyboard.T, 2);
+    this.player2 = new Inkling(this.game, this.game.world.centerX - 150, this.game.world.centerY, 'Inklingp', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.G, Phaser.Keyboard.F, 3);
 
     //creacion de interfaz
     var backgroundhud = new Interface(this.game, this.game.world.centerX, 50, 'hud', 60, 230);
     backgroundhud.anchor.setTo(0.5, 0.5);
-     healthplayer1 = new GaugeIcon(this.game, this.game.world.centerX - 60, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX - 60, 70, player1);
-     healthplayer2 = new GaugeIcon(this.game, this.game.world.centerX + 20, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX + 20, 70, player2);
-     ammoplayer1= new GaugeIcon(this.game, this.game.world.centerX - 105, 70, 'ammoind', 'ammoind', 40, 20, 30, 20, this.game.world.centerX - 105, 65, player1);
+     this.healthplayer1 = new GaugeIcon(this.game, this.game.world.centerX - 60, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX - 60, 70, this.player1);
+     this.healthplayer2 = new GaugeIcon(this.game, this.game.world.centerX + 20, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX + 20, 70, this.player2);
+     this.ammoplayer1= new GaugeIcon(this.game, this.game.world.centerX - 105, 70, 'ammoind', 'ammoind', 40, 20, 30, 20, this.game.world.centerX - 105, 65, this.player1);
      //ammoplayer2= new GaugeIcon(this.game, this.game.world.centerX + 80, 70, 'ammoind', 30, 50, player2)
 
 
     //guardado en array de jugadores
-    players.push(player1);
-    players.push(player2);
+    this.players=[];
+    this.players.push(this.player1);
+    this.players.push(this.player2);
 
-    middlepoint=this.game.add.sprite(null);
-    middlepoint.x=(player1.x+player2.x)/2;
-    middlepoint.y=(player1.y+player2.y)/2;
+    this.middlepoint=this.game.add.sprite(null);
+    this.middlepoint.x=(this.player1.x+this.player2.x)/2;
+    this.middlepoint.y=(this.player1.y+this.player2.y)/2;
 
 
 
 
     //seguimiento de camara(temporal)
-    this.game.camera.follow(middlepoint);
+    this.game.camera.follow(this.middlepoint);
 
     //activacion del sistema de físicas
     this.physics.startSystem(Phaser.Physics.ARCADE);
@@ -88,24 +81,29 @@ var PlayScene = {
   ////////UPDATE/////////
   update: function () {
     self = this;
-    healthplayer1.Update(player1._health);
-    healthplayer2.Update(player2._health);
-    ammoplayer1.Update(player1._ammo);
+    this.game.debug.body(this.player1);
+    this.healthplayer1.Update(this.player1._health);
+    this.healthplayer2.Update(this.player2._health);
+    this.ammoplayer1.Update(this.player1._ammo);
 
-    middlepoint.x=(player1.x+player2.x)/2;
-    middlepoint.y=(player1.y+player2.y)/2;
+    this.middlepoint.x=(this.player1.x+this.player2.x)/2;
+    this.middlepoint.y=(this.player1.y+this.player2.y)/2;
 
-    players.forEach(function (player) {
+    this.players.forEach(function (player) {
       //colisiones jugadores, mapa
       self.game.physics.arcade.collide(player, self.layer);
       //actualizacion de estado del jugador
-      player.update(shots);
+      player.update(self.shots);
       //Colisiones con tile pintado
-      var TileGround = self.map.getTile(Math.floor(player.x / 25), Math.floor((player.y + (player.height / 2) + 15) / 25));
-      if (TileGround !== null) player.Swim(TileGround.index === player.color);
-      else player.Swim(false);
+      var TileGround = self.map.getTileWorldXY(player.x, player.y + (player.height / 2) + 15);
+      var TileWallRight= self.map.getTileWorldXY(player.x + player.width/2 +15, player.y);
+      var TileWallLeft=self.map.getTileWorldXY(player.x - player.width/2 -15, player.y);
+      if (TileWallLeft!==null) player.Swim(TileWallLeft.index === player.color, -1);
+      else if(TileWallRight!==null) player.Swim(TileWallRight.index === player.color, 1);
+      else if(TileGround!==null) player.Swim(TileGround.index === player.color, 0);
+      else player.Swim(false, 0);
       //colisiones con disparos
-      shots.forEachAlive(function (bullet) {
+      self.shots.forEachAlive(function (bullet) {
         if (bullet.color !== player.color) self.game.physics.arcade.collide(bullet, player, function () {
           player.Damage(bullet.Damage);
           bullet.kill();
@@ -116,7 +114,7 @@ var PlayScene = {
 
 
     //colisiones balas con mapa
-    shots.forEachAlive(function (each) {
+    this.shots.forEachAlive(function (each) {
       var TileOnSpawn = self.map.getTileWorldXY(each.x, each.y);
       if (TileOnSpawn !== null) {
         self.map.replace(TileOnSpawn.index, each.color, TileOnSpawn.x, TileOnSpawn.y, 1, 1, self.layer);

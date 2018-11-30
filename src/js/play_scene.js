@@ -8,10 +8,10 @@ function ShotsPool(game, entities) {
   this._group.callAll('kill');
 }
 
-ShotsPool.prototype.spawn = function (x, y, sprite, dir, color) {
+ShotsPool.prototype.spawn = function (x, y, sprite, dir, angle, color) {
   var entity = this._group.getFirstExists(false);
   if (entity) {
-    entity.initialize(x, y, sprite, dir, color);
+    entity.initialize(x, y, sprite, dir, angle, color);
     entity.revive();
   }
   return entity;
@@ -33,6 +33,7 @@ var player2;
 var shots;
 var shot = require('./Shot.js');
 var players = [];
+var middlepoint;
 var PlayScene = {
   ////////CREATE//////////
   create: function () {
@@ -50,10 +51,11 @@ var PlayScene = {
     this.map = this.game.add.tilemap('tilemap');
     this.map.addTilesetImage('tileset');
     this.layer = this.map.createLayer('Capa de Patrones 1');
+    this.layer.resizeWorld();
     this.map.setCollision([1, 2]);
     //creacion de jugadores
-    player1 = new Inkling(this.game, this.game.world.centerX + 150, 0, 'Inklingo', 300, -400, Phaser.Keyboard.RIGHT, Phaser.Keyboard.LEFT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.CONTROL, 2);
-    player2 = new Inkling(this.game, this.game.world.centerX - 150, this.game.world.centerY, 'Inklingp', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, 3);
+    player1 = new Inkling(this.game, this.game.world.centerX + 150, 0, 'Inklingo', 300, -400, Phaser.Keyboard.RIGHT, Phaser.Keyboard.LEFT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.CONTROL, Phaser.Keyboard.R, Phaser.Keyboard.T, 2);
+    player2 = new Inkling(this.game, this.game.world.centerX - 150, this.game.world.centerY, 'Inklingp', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.G, Phaser.Keyboard.L, 3);
 
     //creacion de interfaz
     var backgroundhud = new Interface(this.game, this.game.world.centerX, 50, 'hud', 60, 230);
@@ -68,10 +70,15 @@ var PlayScene = {
     players.push(player1);
     players.push(player2);
 
+    middlepoint=this.game.add.sprite(null);
+    middlepoint.x=(player1.x+player2.x)/2;
+    middlepoint.y=(player1.y+player2.y)/2;
+
+
 
 
     //seguimiento de camara(temporal)
-    //this.game.camera.follow(player1);
+    this.game.camera.follow(middlepoint);
 
     //activacion del sistema de físicas
     this.physics.startSystem(Phaser.Physics.ARCADE);
@@ -84,6 +91,9 @@ var PlayScene = {
     healthplayer1.Update(player1._health);
     healthplayer2.Update(player2._health);
     ammoplayer1.Update(player1._ammo);
+
+    middlepoint.x=(player1.x+player2.x)/2;
+    middlepoint.y=(player1.y+player2.y)/2;
 
     players.forEach(function (player) {
       //colisiones jugadores, mapa
@@ -119,12 +129,12 @@ var PlayScene = {
 
         //pintar tile(cambia el index del tile por uno de color)
         var TileCollided = self.map.getTileWorldXY(each.x + dir * self.map.tileWidth, each.y);
-        var TileCollided2 = self.map.getTileWorldXY(each.x + dir * self.map.tileWidth, each.y + each.height / 2 + 5);
-        var TileCollided3 = self.map.getTileWorldXY(each.x + dir * self.map.tileWidth, each.y - each.height / 2 - 5);
-        var TileCollided4 = self.map.getTileWorldXY(each.x + each.width / 2 + 5, each.y + each.height / 2 + 5);
-        var TileCollided5 = self.map.getTileWorldXY(each.x + each.width / 2 + 5, each.y - each.height / 2 - 5);
-        var TileCollided6 = self.map.getTileWorldXY(each.x - each.width / 2 - 5, each.y + each.height / 2 + 5);
-        var TileCollided7 = self.map.getTileWorldXY(each.x - each.width / 2 - 5, each.y - each.height / 2 - 5);
+        var TileCollided2 = self.map.getTileWorldXY(each.x + dir * self.map.tileWidth, each.y + each.height / 2 + 10);
+        var TileCollided3 = self.map.getTileWorldXY(each.x + dir * self.map.tileWidth, each.y - each.height / 2 - 10);
+        var TileCollided4 = self.map.getTileWorldXY(each.x + each.width / 2 + 5, each.y + each.height / 2 + 10);
+        var TileCollided5 = self.map.getTileWorldXY(each.x + each.width / 2 + 5, each.y - each.height / 2 - 10);
+        var TileCollided6 = self.map.getTileWorldXY(each.x - each.width / 2 - 5, each.y + each.height / 2 + 10);
+        var TileCollided7 = self.map.getTileWorldXY(each.x - each.width / 2 - 5, each.y - each.height / 2 - 10);
 
         if (TileCollided !== null) self.map.replace(TileCollided.index, each.color, TileCollided.x, TileCollided.y, 1, 1, self.layer);
         if (TileCollided2 !== null) self.map.replace(TileCollided2.index, each.color, TileCollided2.x, TileCollided2.y, 1, 1, self.layer);

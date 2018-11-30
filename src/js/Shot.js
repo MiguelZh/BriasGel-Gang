@@ -28,7 +28,7 @@ Shot.prototype.Fall = 400;
 Shot.prototype.Damage = 20;
 
 //Inicialización de la bala (llamada al salir del pool)
-Shot.prototype.initialize = function (x, y, sprite, dir, color) {
+Shot.prototype.initialize = function (x, y, sprite, dir, angle, color) {
     this.color = color;
     this.body.velocity.y = 0;//reseteo de la velocidad
     this.body.velocity.x = 0;
@@ -36,6 +36,7 @@ Shot.prototype.initialize = function (x, y, sprite, dir, color) {
     this.y = y;
     this.loadTexture(sprite, 0);
     this.body.velocity.x = this.Speed * dir;
+    this.body.velocity.y= Math.tan(angle * Math.PI/180) * this.body.velocity.x*dir;
     if (this.body.velocity.x * this.scale.x < 0) this.scale.x = this.scale.x * -1;
     this.body.gravity.y = this.Fall;
 

@@ -1,7 +1,7 @@
 'use strict'
 var shot = require('./Shot.js')
 
-var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM, SHOOT, color) {
+var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM, SHOOT, DGUP, DGDOWN, color) {
   //Atributos
   Phaser.Sprite.call(this, game, x, y, sprite);
   this.smoothed=false;
@@ -33,6 +33,8 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   this.jumpkey = JUMP;
   this.transkey = SWIM;
   this.shootkey = SHOOT;
+  this.aimup=DGUP;
+  this.aimdown=DGDOWN;
 
   //Físicas
   this.game.physics.arcade.enable(this);
@@ -71,8 +73,14 @@ Inkling.prototype.constructor = Inkling;
 Inkling.prototype.FireRate = 200;
 Inkling.prototype.RegenRate = 500;
 Inkling.prototype.RegenLatency = 1000;
+Inkling.prototype.ShotCost=2;
 Inkling.prototype.RechargeRate = 200;
 Inkling.prototype.AutoRechargeTime=4000;
+Inkling.prototype.AngleUp=45;
+Inkling.prototype.AngleDown=-45;
+Inkling.prototype.NeutralAngle=0;
+
+
 
 
 //Métodos Inkling
@@ -201,7 +209,7 @@ Inkling.prototype.Respawn= function(){
   this.y=this.respawnpointy;
 }
 Inkling.prototype.AmmoDecrease = function () {
-  this._ammo -= 5;
+  this._ammo -= this.ShotCost;
   if(this._ammo<=0){
     this._ammo=0;
     this.lastshot=this.game.time.now;
@@ -226,16 +234,20 @@ Inkling.prototype.Recharge = function () {
 
 Inkling.prototype.Fire = function (Pool) {
   //aumento de velocidad de la bala si se esta moviendo
+  var angle=this.NeutralAngle;
+  if(this.game.input.keyboard.isDown(this.aimup)) angle=this.AngleUp;
+  else if(this.game.input.keyboard.isDown(this.aimdown)) angle=this.AngleDown;
+
   if (this._ammo > 0) {
     if (this.game.time.now > this.nextfire) {//si ha pasado suficiente tiempo entre disparos
       this.nextfire = this.game.time.now + this.FireRate;
       this.AmmoDecrease();
       if(Pool!==undefined){
         if (this.scale.x < 0) {
-          Pool.spawn(this.x - this.scale.x, this.y, this.bullet, -1, this.color);//disparo hacia la izquierda
+          Pool.spawn(this.x - this.scale.x, this.y+10, this.bullet, -1, angle, this.color);//disparo hacia la izquierda
         }
         else {
-          Pool.spawn(this.x + this.scale.x, this.y, this.bullet, 1, this.color);//disparo hacia la derecha
+          Pool.spawn(this.x + this.scale.x, this.y+10, this.bullet, 1, angle, this.color);//disparo hacia la derecha
       }
     }
     }

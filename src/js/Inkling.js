@@ -18,6 +18,7 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   this.shooting = false;
   this.isswimming = false;
   this.isclimbing=false;
+  this.climbingside=0;
   this.nextfire = 0;
   this.timeheals = 0;
   this.timerecharge = 0;
@@ -62,7 +63,7 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   this.animations.add('swimidle', [90, 91], 9, true);
 
 
-  this.anchor.setTo(0.5, 0.5);
+  this.anchor.setTo(0.5, 1);
   this.scale.setTo(this.scale.x * 1.1, this.scale.y * 1.1);
 
 
@@ -93,8 +94,8 @@ Inkling.prototype.update = function (Pool) {
 
   if (this.game.input.keyboard.isDown(this.mrightkey)) dir = 1;
   else if (this.game.input.keyboard.isDown(this.mleftkey)) dir = -1;
-  if(this.isclimbing) this.MovementWall(dir);
-  else this.Movement(dir);
+
+  this.Movement(dir);
 
   //Salto
   if (this.body.onFloor() && this.game.input.keyboard.isDown(this.jumpkey)) this.body.velocity.y = this._jump;
@@ -120,18 +121,25 @@ Inkling.prototype.update = function (Pool) {
   this.AutoRecharge();
 }
 
-Inkling.prototype.Swim = function (bool, grav) {
+Inkling.prototype.Swim = function (bool, side) {
   this.isswimming = bool && !this.iskid;
   if(this.isswimming){
-  if(grav!==0) this.isclimbing=true;
-  else this.isclimbing=false;
+  if(side!==0){ 
+    this.isclimbing=true;
+    this.climbingside=side;
   }
   else this.isclimbing=false;
+}
+else this.isclimbing=false;
 }
 
 Inkling.prototype.HurtBoxShift = function () {
   if (!this.iskid) {
-    if (this.isswimming) this.body.setSize(30, 3, 5, 50);
+    if(this.isclimbing)
+      this.body.setSize(3, 30, 23, 42);
+    else if (this.isswimming) {
+      this.body.setSize(30, 3, 5, 50);
+    }
     else this.body.setSize(20, 7, 10, 45);
   }
   else this.body.setSize(20, 42, 10, 11);
@@ -149,6 +157,8 @@ Inkling.prototype.Animator = function () {
     }
     else {
       //animaciones nadando
+      if(!this.isclimbing) this.angle=0;
+      else this.angle=-this.climbingside*90;
       if (this.body.velocity.x === 0) this.animations.play('swimidle', 3, false);
       else this.animations.play('swim', 9, true);
     }
@@ -183,18 +193,16 @@ Inkling.prototype.Animator = function () {
 }
 
 Inkling.prototype.Movement = function (dir) {
-  if (this.scale.x * dir < 0) this.scale.x = -this.scale.x;//cambio de orientación de sprite
-  this.body.velocity.x = dir * this._speed;
-  this.rotation=0;
+  if(!this.isclimbing){
+    this.angle=0;
+    if (this.scale.x * dir < 0) this.scale.x = -this.scale.x;//cambio de orientación de sprite
+    this.body.velocity.x = dir * this._speed;
+  }
+  else {
+    this.body.velocity.y=dir*this._speed*-this.climbingside;
+  }
 }
 
-Inkling.prototype.MovementWall= function(dir){
-  //if (this.scale.x * dir < 0) this.scale.x = -this.scale.x;//cambio de orientación de sprite
-  this.body.velocity.y = dir * this._speed;
-
-  this.rotation=dir*180;
-
-}
 
 Inkling.prototype.Heal = function () {
   if (this._health < 100) {
@@ -257,10 +265,10 @@ Inkling.prototype.Fire = function (Pool) {
       this.AmmoDecrease();
       if(Pool!==undefined){
         if (this.scale.x < 0) {
-          Pool.spawn(this.x - this.scale.x, this.y+10, this.bullet, -1, angle, this.color);//disparo hacia la izquierda
+          Pool.spawn(this.body.x, this.body.y+this.body.height/2, this.bullet, -1, angle, this.color);//disparo hacia la izquierda
         }
         else {
-          Pool.spawn(this.x + this.scale.x, this.y+10, this.bullet, 1, angle, this.color);//disparo hacia la derecha
+          Pool.spawn(this.body.x + this.body.width, this.body.y+this.body.height/2, this.bullet, 1, angle, this.color);//disparo hacia la derecha
       }
     }
     }

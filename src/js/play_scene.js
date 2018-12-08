@@ -69,7 +69,6 @@ var PlayScene = {
 
 
 
-
     //seguimiento de camara(temporal)
     this.game.camera.follow(this.middlepoint);
 
@@ -85,6 +84,7 @@ var PlayScene = {
     this.healthplayer1.Update(this.player1._health);
     this.healthplayer2.Update(this.player2._health);
     this.ammoplayer1.Update(this.player1._ammo);
+    
 
     this.middlepoint.x=(this.player1.x+this.player2.x)/2;
     this.middlepoint.y=(this.player1.y+this.player2.y)/2;
@@ -95,13 +95,17 @@ var PlayScene = {
       //actualizacion de estado del jugador
       player.update(self.shots);
       //Colisiones con tile pintado
-      var TileGround = self.map.getTileWorldXY(player.x, player.y + (player.height / 2) + 15);
-      var TileWallRight= self.map.getTileWorldXY(player.x + player.width/2 +15, player.y);
-      var TileWallLeft=self.map.getTileWorldXY(player.x - player.width/2 -15, player.y);
+      var offset=1;
+      var TileWallRight= self.map.getTileWorldXY(player.body.x + player.body.width+offset, player.body.y+player.body.height/2);
+      var TileWallLeft=self.map.getTileWorldXY(player.body.x-offset,  player.body.y+player.body.height/2);
       if (TileWallLeft!==null) player.Swim(TileWallLeft.index === player.color, -1);
       else if(TileWallRight!==null) player.Swim(TileWallRight.index === player.color, 1);
-      else if(TileGround!==null) player.Swim(TileGround.index === player.color, 0);
+      else if(player.body.onFloor()){
+        var TileGround = self.map.getTileWorldXY(player.body.x+player.body.width/2, player.body.y + player.body.height+offset);
+        if(TileGround!==null) player.Swim(TileGround.index === player.color, 0);
+      }
       else player.Swim(false, 0);
+    
       //colisiones con disparos
       self.shots.forEachAlive(function (bullet) {
         if (bullet.color !== player.color) self.game.physics.arcade.collide(bullet, player, function () {
@@ -111,7 +115,6 @@ var PlayScene = {
       });
 
     });
-
 
     //colisiones balas con mapa
     this.shots.forEachAlive(function (each) {

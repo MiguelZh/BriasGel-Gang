@@ -27,8 +27,6 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   if (this.color === 2) this.bullet = 'bulleto';
   else this.bullet = 'bulletp';
 
-
-
   //Controles
   this.mrightkey = RIGHT;
   this.mleftkey = LEFT;
@@ -87,7 +85,7 @@ Inkling.prototype.NeutralAngle=0;
 Inkling.prototype.update = function (Pool) {
   var dir = 0;
 
-  //movimiento
+  //movimientop
   if (this.iskid || !this.body.onFloor()) this._speed = this.kidspeed;
   else if (!this.isswimming) this._speed = this.squidspeed;
   else this._speed = this.swimspeed;
@@ -103,7 +101,7 @@ Inkling.prototype.update = function (Pool) {
   //transformacion
   if (this.game.input.keyboard.isDown(this.transkey)) this.iskid = false;
   else this.iskid = true;
-
+  
 
 
   //disparo

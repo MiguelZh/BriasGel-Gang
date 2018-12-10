@@ -569,7 +569,6 @@ var PlayScene = {
   ////////UPDATE/////////
   update: function () {
     self = this;
-    this.game.debug.body(this.player1);
     this.healthplayer1.Update(this.player1._health);
     this.healthplayer2.Update(this.player2._health);
     this.ammoplayer1.Update(this.player1._ammo);

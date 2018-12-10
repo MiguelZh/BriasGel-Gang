@@ -25,7 +25,7 @@ var PreloaderScene = {
     this.game.load.image('logo', 'assets/sprites/phaser.png');
     this.game.load.spritesheet('Inklingo', 'assets/sprites/SpriteSheetInkling.png', 50, 53);
     this.game.load.spritesheet('Inklingp', 'assets/sprites/SpriteSheetInkling2.png', 50, 53);
-    this.game.load.tilemap('tilemap', 'assets/tilemap/tilemap2.json', null, Phaser.Tilemap.TILED_JSON);
+    this.game.load.tilemap('tilemap', 'assets/tilemap/tilemap2.Json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('tileset', 'assets/tileset/tileset.png');
     this.game.load.image('bulleto', 'assets/sprites/BalaPintura.png');
     this.game.load.image('bulletp', 'assets/sprites/BalaPintura2.png');

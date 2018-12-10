@@ -90,57 +90,6 @@ var PlayScene = {
     this.middlepoint.x=(this.player1.x+this.player2.x)/2;
     this.middlepoint.y=(this.player1.y+this.player2.y)/2;
 
-  /*  //controles mando
-    if (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1)
-    {
-        console.log("Se detecto, left");
-    }
-    else if (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1)
-    {
-       console.log("Se detecto, right");
-    }
-
-    if (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1)
-    {
-        console.log("Se detecto, up");
-
-    }
-    else if (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > 0.1)
-    {
-      console.log("Se detecto, down");
-
-    }
-
-    if (this.pad1.justPressed(Phaser.Gamepad.XBOX360_A))
-    {
-      console.log("Se detecto, jump");
-
-    }
-
-    if (this.pad1.justReleased(Phaser.Gamepad.XBOX360_B))
-    {
-      console.log("Se detecto, tranform");
-
-    }
-
-    if (this.pad1.connected)
-    {
-        var rightStickX = this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_RIGHT_X);
-        var rightStickY = this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_RIGHT_Y);
-
-        if (rightStickX)
-        {
-          console.log("Se detecto, vertical");
-
-        }
-
-        if (rightStickY)
-        {
-          console.log("Se detecto, vertical");
-
-        }
-    }*/
-    //fin mando
     this.players.forEach(function (player) {
       //colisiones jugadores, mapa
       self.game.physics.arcade.collide(player, self.layer);

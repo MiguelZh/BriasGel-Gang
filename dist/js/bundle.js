@@ -32,7 +32,7 @@ module.exports = GaugeIcon;
 'use strict'
 var shot = require('./Shot.js')
 
-var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM, SHOOT, DGUP, DGDOWN, color) {
+var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM, SHOOT, DGUP, DGDOWN, color,gamepad) {
   //Atributos
   Phaser.Sprite.call(this, game, x, y, sprite);
   this.smoothed=false;
@@ -58,8 +58,12 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   if (this.color === 2) this.bullet = 'bulleto';
   else this.bullet = 'bulletp';
 
-
-
+  this.pad = gamepad;
+  this.game.input.gamepad.start();
+  this.pad1=this.game.input.gamepad.pad1;
+  if(this.game.input.gamepad.supported && this.game.input.gamepad.active ){
+    console.log("Hola!!!!!");
+  }
   //Controles
   this.mrightkey = RIGHT;
   this.mleftkey = LEFT;
@@ -118,27 +122,27 @@ Inkling.prototype.NeutralAngle=0;
 Inkling.prototype.update = function (Pool) {
   var dir = 0;
 
-  //movimiento
+  //movimiento teclado y mando
   if (this.iskid || !this.body.onFloor()) this._speed = this.kidspeed;
   else if (!this.isswimming) this._speed = this.squidspeed;
   else this._speed = this.swimspeed;
 
-  if (this.game.input.keyboard.isDown(this.mrightkey)) dir = 1;
-  else if (this.game.input.keyboard.isDown(this.mleftkey)) dir = -1;
+  if (this.game.input.keyboard.isDown(this.mrightkey)||(this.pad===true &&(this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1))) dir = 1;
+  else if (this.game.input.keyboard.isDown(this.mleftkey) || (this.pad===true && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1))) dir = -1;
 
   this.Movement(dir);
 
   //Salto
-  if (this.body.onFloor() && this.game.input.keyboard.isDown(this.jumpkey)) this.body.velocity.y = this._jump;
+  if (this.body.onFloor() && (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1))) this.body.velocity.y = this._jump;
 
   //transformacion
-  if (this.game.input.keyboard.isDown(this.transkey)) this.iskid = false;
+  if (this.game.input.keyboard.isDown(this.transkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_A))) this.iskid = false;
   else this.iskid = true;
-
+  
 
 
   //disparo
-  if (this.game.input.keyboard.isDown(this.shootkey) && this.iskid) {
+  if ((this.game.input.keyboard.isDown(this.shootkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_X))) && this.iskid) {
     this.shooting = true;
     this.Fire(Pool);
   }
@@ -198,7 +202,7 @@ Inkling.prototype.Animator = function () {
   else {
     //Animaciones en el suelo
     if (this.body.onFloor()) {
-      if (this.game.input.keyboard.isDown(this.jumpkey)) this.animations.play('jump', 9, false);
+      if (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1)) this.animations.play('jump', 9, false);
       else {
         if (this.body.velocity.x === 0) {
           if (!this.shooting)
@@ -524,6 +528,8 @@ var PlayScene = {
       bullets.push(new shot(this.game));
       bullets[i].kill();
     }
+    // inicializacion del gamepad
+ 
 
     //creacion del pool de balas 
     this.shots = new ShotsPool(this.game, bullets);
@@ -535,8 +541,8 @@ var PlayScene = {
     this.layer.resizeWorld();
     this.map.setCollision([1, 2]);
     //creacion de jugadores
-    this.player1 = new Inkling(this.game, this.game.world.centerX + 150, 0, 'Inklingo', 300, -400, Phaser.Keyboard.RIGHT, Phaser.Keyboard.LEFT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.CONTROL, Phaser.Keyboard.R, Phaser.Keyboard.T, 2);
-    this.player2 = new Inkling(this.game, this.game.world.centerX - 150, this.game.world.centerY, 'Inklingp', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.G, Phaser.Keyboard.F, 3);
+    this.player1 = new Inkling(this.game, this.game.world.centerX + 150, 0, 'Inklingo', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.P, Phaser.Keyboard.O, 2,false);
+    this.player2 = new Inkling(this.game, this.game.world.centerX - 150, this.game.world.centerY, 'Inklingp', 300, -400, Phaser.Gamepad.XBOX360_DPAD_LEFT , Phaser.Gamepad.XBOX360_STICK_LEFT_X, Phaser.Gamepad.XBOX360_DPAD_UP , Phaser.Gamepad.XBOX360_DPAD_DOWN ,  Phaser.Gamepad.XBOX360_X, Phaser.Keyboard.G, Phaser.Keyboard.F, 3,true);
 
     //creacion de interfaz
     var backgroundhud = new Interface(this.game, this.game.world.centerX, 50, 'hud', 60, 230);
@@ -572,7 +578,7 @@ var PlayScene = {
     this.healthplayer1.Update(this.player1._health);
     this.healthplayer2.Update(this.player2._health);
     this.ammoplayer1.Update(this.player1._ammo);
-    
+  
 
     this.middlepoint.x=(this.player1.x+this.player2.x)/2;
     this.middlepoint.y=(this.player1.y+this.player2.y)/2;

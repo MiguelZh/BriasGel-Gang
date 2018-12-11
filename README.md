@@ -23,4 +23,8 @@ the winner of the match.
 
 Splatoon Advance - Mockup Pixel Artist: Davitsu Source: davitsu.tumblr.com
 
+## PLAY NOW
+https://miguelzh.github.io/BriasGel-Gang/dist/
+
+
 

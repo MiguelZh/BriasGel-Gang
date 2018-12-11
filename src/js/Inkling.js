@@ -98,16 +98,11 @@ Inkling.prototype.update = function (Pool) {
 
   if (this.game.input.keyboard.isDown(this.mrightkey)||(this.pad===true &&(this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1))) dir = 1;
   else if (this.game.input.keyboard.isDown(this.mleftkey) || (this.pad===true && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1))) dir = -1;
-  if(this.pad===true)
-  {
-  // salto con mando
-  if (this.body.onFloor() && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1))  this.body.velocity.y = this._jump;
-  }
 
   this.Movement(dir);
 
   //Salto
-  if (this.body.onFloor() && this.game.input.keyboard.isDown(this.jumpkey)) this.body.velocity.y = this._jump;
+  if (this.body.onFloor() && (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1))) this.body.velocity.y = this._jump;
 
   //transformacion
   if (this.game.input.keyboard.isDown(this.transkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_A))) this.iskid = false;
@@ -116,7 +111,7 @@ Inkling.prototype.update = function (Pool) {
 
 
   //disparo
-  if ((this.game.input.keyboard.isDown(this.shootkey)||(this.pad ===true && this.pad1.justPressed(Phaser.Gamepad.XBOX360_X))) && this.iskid) {
+  if ((this.game.input.keyboard.isDown(this.shootkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_X))) && this.iskid) {
     this.shooting = true;
     this.Fire(Pool);
   }
@@ -176,7 +171,7 @@ Inkling.prototype.Animator = function () {
   else {
     //Animaciones en el suelo
     if (this.body.onFloor()) {
-      if (this.game.input.keyboard.isDown(this.jumpkey)) this.animations.play('jump', 9, false);
+      if (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1)) this.animations.play('jump', 9, false);
       else {
         if (this.body.velocity.x === 0) {
           if (!this.shooting)

@@ -1,7 +1,7 @@
 'use strict'
 var shot = require('./Shot.js')
 
-var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM, SHOOT, DGUP, DGDOWN, color) {
+var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM, SHOOT, DGUP, DGDOWN, color,gamepad) {
   //Atributos
   Phaser.Sprite.call(this, game, x, y, sprite);
   this.smoothed=false;
@@ -27,8 +27,12 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   if (this.color === 2) this.bullet = 'bulleto';
   else this.bullet = 'bulletp';
 
-
-
+  this.pad = gamepad;
+  this.game.input.gamepad.start();
+  this.pad1=this.game.input.gamepad.pad1;
+  if(this.game.input.gamepad.supported && this.game.input.gamepad.active ){
+    console.log("Hola!!!!!");
+  }
   //Controles
   this.mrightkey = RIGHT;
   this.mleftkey = LEFT;
@@ -87,27 +91,27 @@ Inkling.prototype.NeutralAngle=0;
 Inkling.prototype.update = function (Pool) {
   var dir = 0;
 
-  //movimiento
+  //movimiento teclado y mando
   if (this.iskid || !this.body.onFloor()) this._speed = this.kidspeed;
   else if (!this.isswimming) this._speed = this.squidspeed;
   else this._speed = this.swimspeed;
 
-  if (this.game.input.keyboard.isDown(this.mrightkey)) dir = 1;
-  else if (this.game.input.keyboard.isDown(this.mleftkey)) dir = -1;
+  if (this.game.input.keyboard.isDown(this.mrightkey)||(this.pad===true &&(this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1))) dir = 1;
+  else if (this.game.input.keyboard.isDown(this.mleftkey) || (this.pad===true && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1))) dir = -1;
 
   this.Movement(dir);
 
   //Salto
-  if (this.body.onFloor() && this.game.input.keyboard.isDown(this.jumpkey)) this.body.velocity.y = this._jump;
+  if (this.body.onFloor() && (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1))) this.body.velocity.y = this._jump;
 
   //transformacion
-  if (this.game.input.keyboard.isDown(this.transkey)) this.iskid = false;
+  if (this.game.input.keyboard.isDown(this.transkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_A))) this.iskid = false;
   else this.iskid = true;
-
+  
 
 
   //disparo
-  if (this.game.input.keyboard.isDown(this.shootkey) && this.iskid) {
+  if ((this.game.input.keyboard.isDown(this.shootkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_X))) && this.iskid) {
     this.shooting = true;
     this.Fire(Pool);
   }
@@ -167,7 +171,7 @@ Inkling.prototype.Animator = function () {
   else {
     //Animaciones en el suelo
     if (this.body.onFloor()) {
-      if (this.game.input.keyboard.isDown(this.jumpkey)) this.animations.play('jump', 9, false);
+      if (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1)) this.animations.play('jump', 9, false);
       else {
         if (this.body.velocity.x === 0) {
           if (!this.shooting)

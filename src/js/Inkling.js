@@ -110,7 +110,7 @@ Inkling.prototype.update = function (Pool) {
   if (this.body.onFloor() && this.game.input.keyboard.isDown(this.jumpkey)) this.body.velocity.y = this._jump;
 
   //transformacion
-  if (this.game.input.keyboard.isDown(this.transkey)||(this.pad ===true && this.pad1.justPressed(Phaser.Gamepad.XBOX360_A))) this.iskid = false;
+  if (this.game.input.keyboard.isDown(this.transkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_A))) this.iskid = false;
   else this.iskid = true;
   
 

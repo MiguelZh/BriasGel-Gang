@@ -9,9 +9,6 @@ var Shot = function (game) {
     //Físicas
     this.game.physics.arcade.enable(this);
 
-
-    this.body.outOfBoundsKill = true;
-
     //Sprite
     this.game.add.existing(this);
     this.anchor.setTo(0.5, 0.5);
@@ -39,6 +36,7 @@ Shot.prototype.initialize = function (x, y, sprite, dir, angle, color) {
     this.body.velocity.y= Math.tan(angle * Math.PI/180) * this.body.velocity.x*dir;
     if (this.body.velocity.x * this.scale.x < 0) this.scale.x = this.scale.x * -1;
     this.body.gravity.y = this.Fall;
+    this.body.collideWorldBounds=true;
 
 }
 

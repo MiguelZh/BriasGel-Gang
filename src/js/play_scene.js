@@ -31,7 +31,7 @@ var PlayScene = {
   create: function () {
     //creacion de array de balas
     var bullets = [];
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 50; i++) {
       bullets.push(new shot(this.game));
       bullets[i].kill();
     }
@@ -82,6 +82,8 @@ var PlayScene = {
   ////////UPDATE/////////
   update: function () {
     self = this;
+    console.log("balasmuertas" + this.shots._group.countDead());
+    console.log("balasvivas" + this.shots._group.countLiving());
     this.healthplayer1.Update(this.player1._health);
     this.healthplayer2.Update(this.player2._health);
     this.ammoplayer1.Update(this.player1._ammo);
@@ -124,7 +126,7 @@ var PlayScene = {
         self.map.replace(TileOnSpawn.index, each.color, TileOnSpawn.x, TileOnSpawn.y, 1, 1, self.layer);
         each.kill();
       }
-      self.game.physics.arcade.collide(each, self.layer, function () {
+      else {self.game.physics.arcade.collide(each, self.layer, function () {
         var dir = 0;
         if (each.scale.x >= 0) dir = 1;
         else if (each.scale.x < 0) dir = -1;
@@ -147,7 +149,7 @@ var PlayScene = {
         if (TileCollided7 !== null) self.map.replace(TileCollided7.index, each.color, TileCollided7.x, TileCollided7.y, 1, 1, self.layer);
         each.kill();
       });
-
+    }
     });
 
    

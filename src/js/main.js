@@ -55,10 +55,10 @@ var MenuScene = {
       this.game.load.audio('menuMusic','/assets/menu/Octoling_Rendezvous_8_BIT_Splatoon.mp3')
   },
   create:function(){
-    this.title = this.game.add.sprite(this.game.world.width/10+50,this.game.world.height/10+50,'menuImage');
+    this.title = this.game.add.sprite(this.game.world.width/6+20,this.game.world.height/10,'menuImage');
     console.log(this.game.world.width/5);
     console.log(this.game.world.height/5);
-    this.enterText = this.game.add.text(140,this.game.world.height-100,'Press Space or A in gamepad to play!',{font: '30px Times New Roman', fill: '#999999'})
+    this.enterText = this.game.add.text(100,this.game.world.height-60,'Press Space or A in gamepad to play!',{font: '40px Times New Roman', fill: '#999999'})
     var spacebar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     spacebar.onDown.addOnce(this.start,this);
     this.music = this.game.add.audio('menuMusic');

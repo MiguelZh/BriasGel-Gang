@@ -35,12 +35,11 @@ var PlayScene = {
       bullets.push(new shot(this.game));
       bullets[i].kill();
     }
-    // inicializacion del gamepad
- 
-
     //creacion del pool de balas 
     this.shots = new ShotsPool(this.game, bullets);
-
+    //creacion del audio
+    this.backgroundSound = this.game.add.audio('backgroundMusic');
+    this.backgroundSound.loop = true;
     //creacion del mapa
     this.map = this.game.add.tilemap('tilemap');
     this.map.addTilesetImage('tileset');
@@ -70,7 +69,6 @@ var PlayScene = {
     this.middlepoint.y=(this.player1.y+this.player2.y)/2;
 
 
-
     //seguimiento de camara(temporal)
     this.game.camera.follow(this.middlepoint);
 
@@ -87,7 +85,8 @@ var PlayScene = {
     this.healthplayer1.Update(this.player1._health);
     this.healthplayer2.Update(this.player2._health);
     this.ammoplayer1.Update(this.player1._ammo);
-  
+    
+    this.backgroundSound.play();
 
     this.middlepoint.x=(this.player1.x+this.player2.x)/2;
     this.middlepoint.y=(this.player1.y+this.player2.y)/2;

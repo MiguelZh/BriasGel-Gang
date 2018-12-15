@@ -10,7 +10,7 @@ var BootScene = {
   },
 
   create: function () {
-    this.game.state.start('preloader');
+    this.game.state.start('menu');
   }
 };
 
@@ -35,16 +35,42 @@ var PreloaderScene = {
     this.game.load.image('healthind', 'assets/sprites/HealthIcon.png');
     this.game.load.image('deadicon', 'assets/sprites/F.png');
     this.game.load.image('ammoind', 'assets/sprites/InkTank.png')
-  
+    //load sounds/music
+    this.game.load.audio('backgroundMusic','assets/audio/Splatoon_2_Fly_Octo_Fly.mp3')
 
   },
 
   create: function () {
     this.game.state.start('play');
-
+    this.backgroundSound = this.game.add.audio('backgroundMusic');
+    this.backgroundSound.loop = true;
+    this.backgroundSound.play();
   }
 };
 
+var MenuScene = {
+  preload:function(){
+      //load menu assets
+      this.game.load.image('menuImage','assets/menu/menuImage.jpg')
+      this.game.load.audio('menuMusic','/assets/menu/Octoling_Rendezvous_8_BIT_Splatoon.mp3')
+  },
+  create:function(){
+    this.title = this.game.add.sprite(this.game.world.width/10+50,this.game.world.height/10+50,'menuImage');
+    console.log(this.game.world.width/5);
+    console.log(this.game.world.height/5);
+    this.enterText = this.game.add.text(140,this.game.world.height-100,'Press Space or A in gamepad to play!',{font: '30px Times New Roman', fill: '#999999'})
+    var spacebar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    spacebar.onDown.addOnce(this.start,this);
+    this.music = this.game.add.audio('menuMusic');
+    this.music.loop = true;
+    this.music.play();
+
+  },
+  start: function(){
+    this.game.state.start('preloader');
+    this.music.stop();
+  }
+}
 //800, 600, Phaser.AUTO, 'game',true, false, false
 window.onload = function () {
   var game = new Phaser.Game({
@@ -58,6 +84,7 @@ window.onload = function () {
 
   game.state.add('boot', BootScene);
   game.state.add('preloader', PreloaderScene);
+  game.state.add('menu',MenuScene);
   game.state.add('play', PlayScene);
 
   game.state.start('boot');

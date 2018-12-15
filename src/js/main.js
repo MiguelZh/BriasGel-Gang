@@ -51,14 +51,12 @@ var PreloaderScene = {
 var MenuScene = {
   preload:function(){
       //load menu assets
-      this.game.load.image('menuImage','assets/menu/menuImage.jpg')
+      this.game.load.image('menuImage','assets/menu/TitleScreen.png')
       this.game.load.audio('menuMusic','/assets/menu/Octoling_Rendezvous_8_BIT_Splatoon.mp3')
   },
   create:function(){
-    this.title = this.game.add.sprite(this.game.world.width/6+20,this.game.world.height/10,'menuImage');
-    console.log(this.game.world.width/5);
-    console.log(this.game.world.height/5);
-    this.enterText = this.game.add.text(100,this.game.world.height-60,'Press Space or A in gamepad to play!',{font: '40px Times New Roman', fill: '#999999'})
+    this.title = this.game.add.sprite(0,0,'menuImage');
+    this.enterText = this.game.add.text(100,this.game.world.height-80,'Press Space or A in gamepad to play!',{font: '40px Times New Roman', fill: 'white', stroke: 'black', strokeThickness: 10})
     var spacebar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     spacebar.onDown.addOnce(this.start,this);
     this.music = this.game.add.audio('menuMusic');

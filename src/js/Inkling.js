@@ -125,10 +125,25 @@ Inkling.prototype.update = function (Pool) {
   this.AutoRecharge();
 }
 
-Inkling.prototype.Swim = function (bool, side) {
+Inkling.prototype.Swim = function (bool, side, tile) {
   this.isswimming = bool && !this.iskid;
   if(this.isswimming){
   if(side!==0){ 
+    if(!this.isclimbing){//cuando se entra en estado de climb 
+      this.y-=10;
+      this.body.velocity.x=0;
+      console.log("x: "+ this.x);
+      console.log("tile.x: "+ tile.worldX);
+      console.log("tile.width "+ tile.width);
+      if(side<0) this.x=tile.worldX+tile.width+2;
+      else this.x=tile.worldX-2;
+      console.log("x: " + this.x)
+      
+    }
+    else {
+      if(side<0) this.x=tile.worldX+tile.width+2;
+      else this.x=tile.worldX-2;
+    }
     this.isclimbing=true;
     this.climbingside=side;
   }
@@ -151,6 +166,7 @@ Inkling.prototype.HurtBoxShift = function () {
 }
 
 Inkling.prototype.Animator = function () {
+  this.angle=0;
   //Animaciones del calamar
   if (!this.iskid) {
     //animaciones en tierra
@@ -161,8 +177,7 @@ Inkling.prototype.Animator = function () {
     }
     else {
       //animaciones nadando
-      if(!this.isclimbing) this.angle=0;
-      else this.angle=-this.climbingside*90;
+      if(this.isclimbing) this.angle=-this.climbingside*90;
       if (this.body.velocity.x === 0) this.animations.play('swimidle', 3, false);
       else this.animations.play('swim', 9, true);
     }

@@ -44,8 +44,9 @@ var PlayScene = {
     this.map = this.game.add.tilemap('tilemap');
     this.map.addTilesetImage('tileset');
     this.layer = this.map.createLayer('Capa de Patrones 1');
-    this.layer.resizeWorld();
     this.map.setCollision([1, 2]);
+    console.log(this.layer)
+    
     //creacion de jugadores
     this.player1 = new Inkling(this.game, this.game.world.centerX + 150, 0, 'Inklingo', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.P, Phaser.Keyboard.O, 2,false);
     this.player2 = new Inkling(this.game, this.game.world.centerX - 150, this.game.world.centerY, 'Inklingp', 300, -400, Phaser.Gamepad.XBOX360_DPAD_LEFT , Phaser.Gamepad.XBOX360_STICK_LEFT_X, Phaser.Gamepad.XBOX360_DPAD_UP , Phaser.Gamepad.XBOX360_DPAD_DOWN ,  Phaser.Gamepad.XBOX360_X, Phaser.Keyboard.G, Phaser.Keyboard.F, 3,true);
@@ -64,50 +65,58 @@ var PlayScene = {
     this.players.push(this.player1);
     this.players.push(this.player2);
 
-    this.middlepoint=this.game.add.sprite(null);
-    this.middlepoint.x=(this.player1.x+this.player2.x)/2;
-    this.middlepoint.y=(this.player1.y+this.player2.y)/2;
-
-
-    //seguimiento de camara(temporal)
-    this.game.camera.follow(this.middlepoint);
-
     //activacion del sistema de físicas
-    this.physics.startSystem(Phaser.Physics.ARCADE);
+    this.physics.startSystem(Phaser.Physics.Arcade);
 
   },
 
   ////////UPDATE/////////
   update: function () {
     self = this;
-    console.log("balasmuertas" + this.shots._group.countDead());
-    console.log("balasvivas" + this.shots._group.countLiving());
     this.healthplayer1.Update(this.player1._health);
     this.healthplayer2.Update(this.player2._health);
     this.ammoplayer1.Update(this.player1._ammo);
-    
+    this.game.debug.body(this.player1);
     this.backgroundSound.play();
-
-    this.middlepoint.x=(this.player1.x+this.player2.x)/2;
-    this.middlepoint.y=(this.player1.y+this.player2.y)/2;
-
     this.players.forEach(function (player) {
       //colisiones jugadores, mapa
       self.game.physics.arcade.collide(player, self.layer);
+       //Colisiones con tile pintado
+       var offset=2;
+       var TileWallRight= self.map.getTileWorldXY(player.body.x+player.body.width+offset, player.body.y+player.body.height/2);
+       var TileWallLeft=self.map.getTileWorldXY(player.body.x-offset,  player.body.y+player.body.height/2);
+       var TileWallMiddle=self.map.getTileWorldXY(player.body.x+player.body.width/2,  player.body.y+player.body.height/2);
+     
+       if(player.scale.x>0){
+        if(TileWallMiddle!==null){
+          player.Swim(TileWallMiddle.index === player.color, 1,  TileWallMiddle);
+        }
+        else if(TileWallRight!==null){
+          player.Swim(TileWallRight.index ===player.color, 1, TileWallRight);
+        }
+        else if(player.body.onFloor()){
+          var TileGround = self.map.getTileWorldXY(player.body.x+player.body.width/2, player.body.y + player.body.height+offset);
+          if(TileGround!==null) player.Swim(TileGround.index === player.color, 0,  TileGround);
+        }
+        else player.Swim(false, 0);
+       }
+       else if(player.scale.x<0){
+        if(TileWallLeft!==null){
+          player.Swim(TileWallLeft.index ===player.color, -1, TileWallLeft);
+        }
+        else if(TileWallMiddle!==null){
+          player.Swim(TileWallMiddle.index === player.color, -1,  TileWallMiddle);
+        }
+         
+        else if(player.body.onFloor()){
+          var TileGround = self.map.getTileWorldXY(player.body.x+player.body.width/2, player.body.y + player.body.height+offset);
+          if(TileGround!==null) player.Swim(TileGround.index === player.color, 0,  TileGround);
+        }
+        else player.Swim(false, 0);
+       }
+     
       //actualizacion de estado del jugador
       player.update(self.shots);
-      //Colisiones con tile pintado
-      var offset=1;
-      var TileWallRight= self.map.getTileWorldXY(player.body.x + player.body.width+offset, player.body.y+player.body.height/2);
-      var TileWallLeft=self.map.getTileWorldXY(player.body.x-offset,  player.body.y+player.body.height/2);
-      if (TileWallLeft!==null) player.Swim(TileWallLeft.index === player.color, -1);
-      else if(TileWallRight!==null) player.Swim(TileWallRight.index === player.color, 1);
-      else if(player.body.onFloor()){
-        var TileGround = self.map.getTileWorldXY(player.body.x+player.body.width/2, player.body.y + player.body.height+offset);
-        if(TileGround!==null) player.Swim(TileGround.index === player.color, 0);
-      }
-      else player.Swim(false, 0);
-    
       //colisiones con disparos
       self.shots.forEachAlive(function (bullet) {
         if (bullet.color !== player.color) self.game.physics.arcade.collide(bullet, player, function () {

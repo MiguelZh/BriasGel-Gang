@@ -56,13 +56,12 @@ var MenuScene = {
   },
   create:function(){
     this.title = this.game.add.sprite(0,0,'menuImage');
-    this.enterText = this.game.add.text(100,this.game.world.height-80,'Press Space or A in gamepad to play!',{font: '40px Times New Roman', fill: 'white', stroke: 'black', strokeThickness: 10})
+    this.enterText = this.game.add.text(250,this.game.world.height-80,'Press Space to play!',{font: '40px Times New Roman', fill: 'white', stroke: 'black', strokeThickness: 10})
     var spacebar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     spacebar.onDown.addOnce(this.start,this);
     this.music = this.game.add.audio('menuMusic');
     this.music.loop = true;
     this.music.play();
-
   },
   start: function(){
     this.game.state.start('preloader');

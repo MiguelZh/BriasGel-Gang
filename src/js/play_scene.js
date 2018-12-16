@@ -57,7 +57,7 @@ var PlayScene = {
      this.healthplayer1 = new GaugeIcon(this.game, this.game.world.centerX - 60, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX - 60, 70, this.player1);
      this.healthplayer2 = new GaugeIcon(this.game, this.game.world.centerX + 20, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX + 20, 70, this.player2);
      this.ammoplayer1= new GaugeIcon(this.game, this.game.world.centerX - 105, 70, 'ammoind', 'ammoind', 40, 20, 30, 20, this.game.world.centerX - 105, 65, this.player1);
-     //ammoplayer2= new GaugeIcon(this.game, this.game.world.centerX + 80, 70, 'ammoind', 30, 50, player2)
+     this.ammoplayer2= new GaugeIcon(this.game, this.game.world.centerX + 85, 70, 'ammoind', 'ammoind', 40, 20, 30, 20, this.game.world.centerX + 85, 65, this.player2);
 
 
     //guardado en array de jugadores
@@ -76,6 +76,8 @@ var PlayScene = {
     this.healthplayer1.Update(this.player1._health);
     this.healthplayer2.Update(this.player2._health);
     this.ammoplayer1.Update(this.player1._ammo);
+    this.ammoplayer2.Update(this.player2._ammo);
+    
     this.game.debug.body(this.player1);
     this.backgroundSound.play();
     this.players.forEach(function (player) {

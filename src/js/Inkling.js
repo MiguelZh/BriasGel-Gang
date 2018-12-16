@@ -79,7 +79,7 @@ Inkling.prototype.constructor = Inkling;
 Inkling.prototype.FireRate = 200;
 Inkling.prototype.RegenRate = 500;
 Inkling.prototype.RegenLatency = 1000;
-Inkling.prototype.ShotCost=10;
+Inkling.prototype.ShotCost=5;
 Inkling.prototype.RechargeRate = 200;
 Inkling.prototype.AutoRechargeTime=4000;
 Inkling.prototype.AngleUp=45;
@@ -102,7 +102,7 @@ Inkling.prototype.update = function (Pool) {
   this.Movement(dir);
 
   //Salto
-  if (this.body.onFloor() && (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1))) this.body.velocity.y = this._jump;
+  if (this.body.onFloor() && (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.9))) this.body.velocity.y = this._jump;
 
   //transformacion
   if (this.game.input.keyboard.isDown(this.transkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_A))) this.iskid = false;
@@ -186,7 +186,7 @@ Inkling.prototype.Animator = function () {
   else {
     //Animaciones en el suelo
     if (this.body.onFloor()) {
-      if (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1)) this.animations.play('jump', 9, false);
+      if (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.9)) this.animations.play('jump', 9, false);
       else {
         if (this.body.velocity.x === 0) {
           if (!this.shooting)

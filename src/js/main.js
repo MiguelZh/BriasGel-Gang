@@ -52,7 +52,7 @@ var MenuScene = {
   preload:function(){
       //load menu assets
       this.game.load.image('menuImage','assets/menu/TitleScreen.png');
-      this.game.load.audio('menuMusic','/assets/menu/MenuMusic.mp3');
+      this.game.load.audio('menuMusic','assets/menu/MenuMusic.mp3');
   },
   create:function(){
     this.title = this.game.add.sprite(0,0,'menuImage');

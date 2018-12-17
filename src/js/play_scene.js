@@ -45,7 +45,6 @@ var PlayScene = {
     this.map.addTilesetImage('tileset');
     this.layer = this.map.createLayer('Capa de Patrones 1');
     this.map.setCollision([1, 2]);
-    console.log(this.layer)
     
     //creacion de jugadores
     this.player1 = new Inkling(this.game, this.game.world.centerX + 150, 0, 'Inklingo', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.P, Phaser.Keyboard.O, 2,false);
@@ -78,8 +77,8 @@ var PlayScene = {
     this.ammoplayer1.Update(this.player1._ammo);
     this.ammoplayer2.Update(this.player2._ammo);
     
-    this.game.debug.body(this.player1);
     this.backgroundSound.play();
+
     this.players.forEach(function (player) {
       //colisiones jugadores, mapa
       self.game.physics.arcade.collide(player, self.layer);

@@ -449,8 +449,8 @@ var PreloaderScene = {
 var MenuScene = {
   preload:function(){
       //load menu assets
-      this.game.load.image('menuImage','assets/menu/TitleScreen.png')
-      this.game.load.audio('menuMusic','/assets/menu/Octoling_Rendezvous_8_BIT_Splatoon.mp3')
+      this.game.load.image('menuImage','assets/menu/TitleScreen.png');
+      this.game.load.audio('menuMusic','/assets/menu/MenuMusic.mp3');
   },
   create:function(){
     this.title = this.game.add.sprite(0,0,'menuImage');

@@ -110,7 +110,7 @@ Inkling.prototype.constructor = Inkling;
 Inkling.prototype.FireRate = 200;
 Inkling.prototype.RegenRate = 500;
 Inkling.prototype.RegenLatency = 1000;
-Inkling.prototype.ShotCost=10;
+Inkling.prototype.ShotCost=5;
 Inkling.prototype.RechargeRate = 200;
 Inkling.prototype.AutoRechargeTime=4000;
 Inkling.prototype.AngleUp=45;
@@ -133,7 +133,7 @@ Inkling.prototype.update = function (Pool) {
   this.Movement(dir);
 
   //Salto
-  if (this.body.onFloor() && (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1))) this.body.velocity.y = this._jump;
+  if (this.body.onFloor() && (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.9))) this.body.velocity.y = this._jump;
 
   //transformacion
   if (this.game.input.keyboard.isDown(this.transkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_A))) this.iskid = false;
@@ -156,10 +156,25 @@ Inkling.prototype.update = function (Pool) {
   this.AutoRecharge();
 }
 
-Inkling.prototype.Swim = function (bool, side) {
+Inkling.prototype.Swim = function (bool, side, tile) {
   this.isswimming = bool && !this.iskid;
   if(this.isswimming){
   if(side!==0){ 
+    if(!this.isclimbing){//cuando se entra en estado de climb 
+      this.y-=10;
+      this.body.velocity.x=0;
+      console.log("x: "+ this.x);
+      console.log("tile.x: "+ tile.worldX);
+      console.log("tile.width "+ tile.width);
+      if(side<0) this.x=tile.worldX+tile.width+2;
+      else this.x=tile.worldX-2;
+      console.log("x: " + this.x)
+      
+    }
+    else {
+      if(side<0) this.x=tile.worldX+tile.width+2;
+      else this.x=tile.worldX-2;
+    }
     this.isclimbing=true;
     this.climbingside=side;
   }
@@ -182,6 +197,7 @@ Inkling.prototype.HurtBoxShift = function () {
 }
 
 Inkling.prototype.Animator = function () {
+  this.angle=0;
   //Animaciones del calamar
   if (!this.iskid) {
     //animaciones en tierra
@@ -192,8 +208,7 @@ Inkling.prototype.Animator = function () {
     }
     else {
       //animaciones nadando
-      if(!this.isclimbing) this.angle=0;
-      else this.angle=-this.climbingside*90;
+      if(this.isclimbing) this.angle=-this.climbingside*90;
       if (this.body.velocity.x === 0) this.animations.play('swimidle', 3, false);
       else this.animations.play('swim', 9, true);
     }
@@ -202,7 +217,7 @@ Inkling.prototype.Animator = function () {
   else {
     //Animaciones en el suelo
     if (this.body.onFloor()) {
-      if (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.1)) this.animations.play('jump', 9, false);
+      if (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.9)) this.animations.play('jump', 9, false);
       else {
         if (this.body.velocity.x === 0) {
           if (!this.shooting)
@@ -393,7 +408,7 @@ var BootScene = {
   },
 
   create: function () {
-    this.game.state.start('preloader');
+    this.game.state.start('menu');
   }
 };
 
@@ -408,7 +423,7 @@ var PreloaderScene = {
     this.game.load.image('logo', 'assets/sprites/phaser.png');
     this.game.load.spritesheet('Inklingo', 'assets/sprites/SpriteSheetInkling.png', 50, 53);
     this.game.load.spritesheet('Inklingp', 'assets/sprites/SpriteSheetInkling2.png', 50, 53);
-    this.game.load.tilemap('tilemap', 'assets/tilemap/tilemap2.Json', null, Phaser.Tilemap.TILED_JSON);
+    this.game.load.tilemap('tilemap', 'assets/tilemap/tilemap3.Json', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('tileset', 'assets/tileset/tileset.png');
     this.game.load.image('bulleto', 'assets/sprites/BalaPintura.png');
     this.game.load.image('bulletp', 'assets/sprites/BalaPintura2.png');
@@ -418,16 +433,39 @@ var PreloaderScene = {
     this.game.load.image('healthind', 'assets/sprites/HealthIcon.png');
     this.game.load.image('deadicon', 'assets/sprites/F.png');
     this.game.load.image('ammoind', 'assets/sprites/InkTank.png')
-  
+    //load sounds/music
+    this.game.load.audio('backgroundMusic','assets/audio/Splatoon_2_Fly_Octo_Fly.mp3')
 
   },
 
   create: function () {
     this.game.state.start('play');
-
+    this.backgroundSound = this.game.add.audio('backgroundMusic');
+    this.backgroundSound.loop = true;
+    this.backgroundSound.play();
   }
 };
 
+var MenuScene = {
+  preload:function(){
+      //load menu assets
+      this.game.load.image('menuImage','assets/menu/TitleScreen.png')
+      this.game.load.audio('menuMusic','/assets/menu/Octoling_Rendezvous_8_BIT_Splatoon.mp3')
+  },
+  create:function(){
+    this.title = this.game.add.sprite(0,0,'menuImage');
+    this.enterText = this.game.add.text(250,this.game.world.height-80,'Press Space to play!',{font: '40px Times New Roman', fill: 'white', stroke: 'black', strokeThickness: 10})
+    var spacebar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    spacebar.onDown.addOnce(this.start,this);
+    this.music = this.game.add.audio('menuMusic');
+    this.music.loop = true;
+    this.music.play();
+  },
+  start: function(){
+    this.game.state.start('preloader');
+    this.music.stop();
+  }
+}
 //800, 600, Phaser.AUTO, 'game',true, false, false
 window.onload = function () {
   var game = new Phaser.Game({
@@ -441,6 +479,7 @@ window.onload = function () {
 
   game.state.add('boot', BootScene);
   game.state.add('preloader', PreloaderScene);
+  game.state.add('menu',MenuScene);
   game.state.add('play', PlayScene);
 
   game.state.start('boot');
@@ -526,18 +565,18 @@ var PlayScene = {
       bullets.push(new shot(this.game));
       bullets[i].kill();
     }
-    // inicializacion del gamepad
- 
-
     //creacion del pool de balas 
     this.shots = new ShotsPool(this.game, bullets);
-
+    //creacion del audio
+    this.backgroundSound = this.game.add.audio('backgroundMusic');
+    this.backgroundSound.loop = true;
     //creacion del mapa
     this.map = this.game.add.tilemap('tilemap');
     this.map.addTilesetImage('tileset');
     this.layer = this.map.createLayer('Capa de Patrones 1');
-    this.layer.resizeWorld();
     this.map.setCollision([1, 2]);
+    console.log(this.layer)
+    
     //creacion de jugadores
     this.player1 = new Inkling(this.game, this.game.world.centerX + 150, 0, 'Inklingo', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.P, Phaser.Keyboard.O, 2,false);
     this.player2 = new Inkling(this.game, this.game.world.centerX - 150, this.game.world.centerY, 'Inklingp', 300, -400, Phaser.Gamepad.XBOX360_DPAD_LEFT , Phaser.Gamepad.XBOX360_STICK_LEFT_X, Phaser.Gamepad.XBOX360_DPAD_UP , Phaser.Gamepad.XBOX360_DPAD_DOWN ,  Phaser.Gamepad.XBOX360_X, Phaser.Keyboard.G, Phaser.Keyboard.F, 3,true);
@@ -548,7 +587,7 @@ var PlayScene = {
      this.healthplayer1 = new GaugeIcon(this.game, this.game.world.centerX - 60, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX - 60, 70, this.player1);
      this.healthplayer2 = new GaugeIcon(this.game, this.game.world.centerX + 20, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX + 20, 70, this.player2);
      this.ammoplayer1= new GaugeIcon(this.game, this.game.world.centerX - 105, 70, 'ammoind', 'ammoind', 40, 20, 30, 20, this.game.world.centerX - 105, 65, this.player1);
-     //ammoplayer2= new GaugeIcon(this.game, this.game.world.centerX + 80, 70, 'ammoind', 30, 50, player2)
+     this.ammoplayer2= new GaugeIcon(this.game, this.game.world.centerX + 85, 70, 'ammoind', 'ammoind', 40, 20, 30, 20, this.game.world.centerX + 85, 65, this.player2);
 
 
     //guardado en array de jugadores
@@ -556,50 +595,60 @@ var PlayScene = {
     this.players.push(this.player1);
     this.players.push(this.player2);
 
-    this.middlepoint=this.game.add.sprite(null);
-    this.middlepoint.x=(this.player1.x+this.player2.x)/2;
-    this.middlepoint.y=(this.player1.y+this.player2.y)/2;
-
-
-
-    //seguimiento de camara(temporal)
-    this.game.camera.follow(this.middlepoint);
-
     //activacion del sistema de físicas
-    this.physics.startSystem(Phaser.Physics.ARCADE);
+    this.physics.startSystem(Phaser.Physics.Arcade);
 
   },
 
   ////////UPDATE/////////
   update: function () {
     self = this;
-    console.log("balasmuertas" + this.shots._group.countDead());
-    console.log("balasvivas" + this.shots._group.countLiving());
     this.healthplayer1.Update(this.player1._health);
     this.healthplayer2.Update(this.player2._health);
     this.ammoplayer1.Update(this.player1._ammo);
-  
-
-    this.middlepoint.x=(this.player1.x+this.player2.x)/2;
-    this.middlepoint.y=(this.player1.y+this.player2.y)/2;
-
+    this.ammoplayer2.Update(this.player2._ammo);
+    
+    this.game.debug.body(this.player1);
+    this.backgroundSound.play();
     this.players.forEach(function (player) {
       //colisiones jugadores, mapa
       self.game.physics.arcade.collide(player, self.layer);
+       //Colisiones con tile pintado
+       var offset=2;
+       var TileWallRight= self.map.getTileWorldXY(player.body.x+player.body.width+offset, player.body.y+player.body.height/2);
+       var TileWallLeft=self.map.getTileWorldXY(player.body.x-offset,  player.body.y+player.body.height/2);
+       var TileWallMiddle=self.map.getTileWorldXY(player.body.x+player.body.width/2,  player.body.y+player.body.height/2);
+     
+       if(player.scale.x>0){
+        if(TileWallMiddle!==null){
+          player.Swim(TileWallMiddle.index === player.color, 1,  TileWallMiddle);
+        }
+        else if(TileWallRight!==null){
+          player.Swim(TileWallRight.index ===player.color, 1, TileWallRight);
+        }
+        else if(player.body.onFloor()){
+          var TileGround = self.map.getTileWorldXY(player.body.x+player.body.width/2, player.body.y + player.body.height+offset);
+          if(TileGround!==null) player.Swim(TileGround.index === player.color, 0,  TileGround);
+        }
+        else player.Swim(false, 0);
+       }
+       else if(player.scale.x<0){
+        if(TileWallLeft!==null){
+          player.Swim(TileWallLeft.index ===player.color, -1, TileWallLeft);
+        }
+        else if(TileWallMiddle!==null){
+          player.Swim(TileWallMiddle.index === player.color, -1,  TileWallMiddle);
+        }
+         
+        else if(player.body.onFloor()){
+          var TileGround = self.map.getTileWorldXY(player.body.x+player.body.width/2, player.body.y + player.body.height+offset);
+          if(TileGround!==null) player.Swim(TileGround.index === player.color, 0,  TileGround);
+        }
+        else player.Swim(false, 0);
+       }
+     
       //actualizacion de estado del jugador
       player.update(self.shots);
-      //Colisiones con tile pintado
-      var offset=1;
-      var TileWallRight= self.map.getTileWorldXY(player.body.x + player.body.width+offset, player.body.y+player.body.height/2);
-      var TileWallLeft=self.map.getTileWorldXY(player.body.x-offset,  player.body.y+player.body.height/2);
-      if (TileWallLeft!==null) player.Swim(TileWallLeft.index === player.color, -1);
-      else if(TileWallRight!==null) player.Swim(TileWallRight.index === player.color, 1);
-      else if(player.body.onFloor()){
-        var TileGround = self.map.getTileWorldXY(player.body.x+player.body.width/2, player.body.y + player.body.height+offset);
-        if(TileGround!==null) player.Swim(TileGround.index === player.color, 0);
-      }
-      else player.Swim(false, 0);
-    
       //colisiones con disparos
       self.shots.forEachAlive(function (bullet) {
         if (bullet.color !== player.color) self.game.physics.arcade.collide(bullet, player, function () {

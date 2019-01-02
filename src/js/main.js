@@ -34,9 +34,16 @@ var PreloaderScene = {
     this.game.load.image('backgroundpu', 'assets/sprites/PurpleBackground.png');
     this.game.load.image('healthind', 'assets/sprites/HealthIcon.png');
     this.game.load.image('deadicon', 'assets/sprites/F.png');
-    this.game.load.image('ammoind', 'assets/sprites/InkTank.png')
+    this.game.load.image('ammoind', 'assets/sprites/InkTank.png');
     //load sounds/music
-    this.game.load.audio('backgroundMusic','assets/audio/Splatoon_2_Fly_Octo_Fly.mp3')
+    this.game.load.audio('backgroundMusic','assets/audio/Splatoon_2_Fly_Octo_Fly.mp3');
+    this.game.load.audio('shootInk0','assets/audio/sounds/inkHitSplash00.wav');
+    this.game.load.audio('shootInk1','assets/audio/sounds/inkHitSplash01.wav');
+    this.game.load.audio('shootInk2','assets/audio/sounds/inkHitSplash02.wav');
+    this.game.load.audio('shootInk3','assets/audio/sounds/inkHitSplash03.wav');
+    this.game.load.audio('endSound','assets/audio/sounds/gameFinish.wav');
+    this.game.load.audio('step','assets/audio/sounds/step.wav');
+
 
   },
 
@@ -44,6 +51,7 @@ var PreloaderScene = {
     this.game.state.start('play');
     this.backgroundSound = this.game.add.audio('backgroundMusic');
     this.backgroundSound.loop = true;
+    this.backgroundSound.volume = 0.1;
     this.backgroundSound.play();
   }
 };
@@ -56,11 +64,13 @@ var MenuScene = {
   },
   create:function(){
     this.title = this.game.add.sprite(0,0,'menuImage');
-    this.enterText = this.game.add.text(250,this.game.world.height-80,'Press Space to play!',{font: '40px Times New Roman', fill: 'white', stroke: 'black', strokeThickness: 10})
-    var spacebar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    spacebar.onDown.addOnce(this.start,this);
+    this.enterText = this.game.add.text(250,this.game.world.height-80,'Press Enter to play!',{font: '40px Times New Roman', fill: 'white', stroke: 'black', strokeThickness: 10})
+    var inputKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+    inputKey.onDown.addOnce(this.start,this);
     this.music = this.game.add.audio('menuMusic');
     this.music.loop = true;
+    this.music.volume = 0.1;
+    this.music.play();
     
   },
   start: function(){

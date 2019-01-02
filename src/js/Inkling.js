@@ -68,6 +68,16 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   this.animations.add('swim', [90, 91, 92, 93], 9, true);
   this.animations.add('swimidle', [90, 91], 9, true);
 
+  //general sounds
+  //shooting
+  this.shot0 = this.game.add.audio('shootInk0');
+  this.shot1 = this.game.add.audio('shootInk1');
+  this.shot2 = this.game.add.audio('shootInk2');
+  this.shot3 = this.game.add.audio('shootInk3');
+  this.shots = [this.shot0,this.shot1,this.shot2,this.shot3];
+  //running
+  this.step = this.game.add.audio('step');
+  this.step.loop = true;
 
   this.anchor.setTo(0.5, 1);
   this.scale.setTo(this.scale.x * 1.1, this.scale.y * 1.1);
@@ -98,8 +108,11 @@ Inkling.prototype.update = function (Pool) {
   else if (!this.isswimming) this._speed = this.squidspeed;
   else this._speed = this.swimspeed;
 
-  if (this.game.input.keyboard.isDown(this.mrightkey)||(this.pad===true &&(this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1))) dir = 1;
-  else if (this.game.input.keyboard.isDown(this.mleftkey) || (this.pad===true && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1))) dir = -1;
+  if (this.game.input.keyboard.isDown(this.mrightkey)||(this.pad===true &&(this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1))){dir = 1; this.isDown = true; }
+  else if (this.game.input.keyboard.isDown(this.mleftkey) || (this.pad===true && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1))) {dir = -1; this.isDown = true;}
+  else this.isDown = false;
+  if(this.isDown && this.body.onFloor() /*&& !this.step.isPlaying()*/){ this.step.play();}
+  else this.step.stop();
 
   this.Movement(dir);
 
@@ -114,6 +127,8 @@ Inkling.prototype.update = function (Pool) {
 
   //disparo
   if ((this.game.input.keyboard.isDown(this.shootkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_X))) && this.iskid) {
+    //this.shots[this.getRandom(0,4)].play();
+    //this.shot0.play();
     this.shooting = true;
     this.Fire(Pool);
   }
@@ -290,7 +305,9 @@ Inkling.prototype.Fire = function (Pool) {
     }
   }
 }
-
+Inkling.prototype.getRandom = function (min, max) {
+  return  Math.floor( Math.random() * (max - min) + min );
+}
 
 
 

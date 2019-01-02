@@ -189,7 +189,8 @@ var PlayScene = {
     this.timeText.text = timeString;
 
     if (this.timeInSeconds == 0) {
-        //fin partida
+        this.sound = this.game.add.audio('endSound');
+        this.sound.play();
     }
   },
 

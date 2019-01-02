@@ -30,9 +30,11 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   this.pad = gamepad;
   this.game.input.gamepad.start();
   this.pad1=this.game.input.gamepad.pad1;
+  /*
   if(this.game.input.gamepad.supported && this.game.input.gamepad.active ){
     console.log("Hola!!!!!");
   }
+  */
   //Controles
   this.mrightkey = RIGHT;
   this.mleftkey = LEFT;

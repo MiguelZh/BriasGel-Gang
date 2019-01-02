@@ -47,17 +47,33 @@ var PlayScene = {
     this.map.setCollision([1, 2]);
     
     //creacion de jugadores
-    this.player1 = new Inkling(this.game, this.game.world.centerX + 150, 0, 'Inklingo', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.P, Phaser.Keyboard.O, 2,false);
-    this.player2 = new Inkling(this.game, this.game.world.centerX - 150, this.game.world.centerY, 'Inklingp', 300, -400, Phaser.Gamepad.XBOX360_DPAD_LEFT , Phaser.Gamepad.XBOX360_STICK_LEFT_X, Phaser.Gamepad.XBOX360_DPAD_UP , Phaser.Gamepad.XBOX360_DPAD_DOWN ,  Phaser.Gamepad.XBOX360_X, Phaser.Keyboard.G, Phaser.Keyboard.F, 3,true);
-
+    this.player1 = new Inkling(this.game, this.game.world.centerX + 350, 0, 'Inklingo', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.P, Phaser.Keyboard.O, 2,false);
+    this.player2 = new Inkling(this.game, this.game.world.centerX - 350, 0, 'Inklingp', 300, -400, Phaser.Gamepad.XBOX360_DPAD_LEFT , Phaser.Gamepad.XBOX360_STICK_LEFT_X, Phaser.Gamepad.XBOX360_DPAD_UP , Phaser.Gamepad.XBOX360_DPAD_DOWN ,  Phaser.Gamepad.XBOX360_X, Phaser.Keyboard.G, Phaser.Keyboard.F, 3,true);
+    this.player1.scale.x=-this.player1.scale.x;
     //creacion de interfaz
-    var backgroundhud = new Interface(this.game, this.game.world.centerX, 50, 'hud', 60, 230);
+    var margin=this.game.height-10;
+    var backgroundhud = new Interface(this.game, this.game.world.centerX, margin-20, 'hud', 60, 230);
     backgroundhud.anchor.setTo(0.5, 0.5);
-     this.healthplayer1 = new GaugeIcon(this.game, this.game.world.centerX - 60, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX - 60, 70, this.player1);
-     this.healthplayer2 = new GaugeIcon(this.game, this.game.world.centerX + 20, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX + 20, 70, this.player2);
-     this.ammoplayer1= new GaugeIcon(this.game, this.game.world.centerX - 105, 70, 'ammoind', 'ammoind', 40, 20, 30, 20, this.game.world.centerX - 105, 65, this.player1);
-     this.ammoplayer2= new GaugeIcon(this.game, this.game.world.centerX + 85, 70, 'ammoind', 'ammoind', 40, 20, 30, 20, this.game.world.centerX + 85, 65, this.player2);
 
+    //Timer
+    this.timeInSeconds=120;
+    var backgroundTimer=new Interface(this.game, this.game.world.centerX + 300, margin-20, 'hud', 30, 150)
+    backgroundTimer.anchor.setTo(0.5, 0.5);
+    this.timeText=this.game.add.text(backgroundTimer.x,margin-20,'2:00');
+    this.timeText.anchor.setTo(0.5,0.5);
+    this.timeText.font = 'Arial Black';
+    this.timeText.fontSize = 20;
+    this.timeText.fontWeight = 'bold';
+    this.timeText.fill = 'white';
+    this.timer=this.game.time.events.loop(Phaser.Timer.SECOND, this.updateTimer, this);
+      
+
+
+
+     this.healthplayer1 = new GaugeIcon(this.game, backgroundhud.x - 60, margin, 'healthind', 'deadicon', 45, 40, 45, 40, backgroundhud.x - 60, margin, this.player1);
+     this.healthplayer2 = new GaugeIcon(this.game, backgroundhud.x + 20, margin, 'healthind', 'deadicon', 45, 40, 45, 40, backgroundhud.x + 20, margin, this.player2);
+     this.ammoplayer1= new GaugeIcon(this.game, backgroundhud.x - 105, margin, 'ammoind', 'ammoind', 40, 20, 30, 20, backgroundhud.x - 105, margin-5, this.player1);
+     this.ammoplayer2= new GaugeIcon(this.game, backgroundhud.x + 85, margin, 'ammoind', 'ammoind', 40, 20, 30, 20, backgroundhud.x + 85, margin-5, this.player2);
 
     //guardado en array de jugadores
     this.players=[];
@@ -163,7 +179,26 @@ var PlayScene = {
 
    
 
-  }
+  },
+
+  updateTimer: function(){
+    this.timeInSeconds--;
+    var minutes = Math.floor(this.timeInSeconds / 60);
+    var seconds = this.timeInSeconds - (minutes * 60);
+    var timeString = this.addZeros(minutes) + ":" + this.addZeros(seconds);
+    this.timeText.text = timeString;
+
+    if (this.timeInSeconds == 0) {
+        //fin partida
+    }
+  },
+
+  addZeros: function(num) {
+    if (num < 10) {
+        num = "0" + num;
+    }
+    return num;
+}
 
 };
 

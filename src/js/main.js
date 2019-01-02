@@ -61,9 +61,10 @@ var MenuScene = {
     spacebar.onDown.addOnce(this.start,this);
     this.music = this.game.add.audio('menuMusic');
     this.music.loop = true;
-    this.music.play();
+    
   },
   start: function(){
+    this.music.play();
     this.game.state.start('preloader');
     this.music.stop();
   }

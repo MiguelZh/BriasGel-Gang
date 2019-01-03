@@ -41,8 +41,10 @@ var PreloaderScene = {
     this.game.load.audio('shootInk1','assets/audio/sounds/inkHitSplash01.wav');
     this.game.load.audio('shootInk2','assets/audio/sounds/inkHitSplash02.wav');
     this.game.load.audio('shootInk3','assets/audio/sounds/inkHitSplash03.wav');
+    this.game.load.audio('shootInk4','assets/audio/sounds/noAmmo.mp3');
     this.game.load.audio('endSound','assets/audio/sounds/gameFinish.wav');
     this.game.load.audio('step','assets/audio/sounds/step.wav');
+    this.game.load.audio('swim','assets/audio/sounds/swim.wav');
     this.game.load.audio('jump','assets/audio/sounds/jump.mp3');
     this.game.load.audio('countdown','assets/audio/sounds/countdownTimer.mp3');
 

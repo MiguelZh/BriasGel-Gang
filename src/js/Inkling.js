@@ -68,18 +68,22 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   this.animations.add('swim', [90, 91, 92, 93], 9, true);
   this.animations.add('swimidle', [90, 91], 9, true);
 
-  //general sounds
-  //shooting
-  this.shot0 = this.game.add.sound('shootInk0');
-  this.shot1 = this.game.add.sound('shootInk1');
-  this.shot2 = this.game.add.sound('shootInk2');
-  this.shot3 = this.game.add.sound('shootInk3');
-  this.shots = [this.shot0,this.shot1,this.shot2,this.shot3];
-  //running
-  this.step = this.game.add.sound('step');
-  this.step.loop = true;
-  this.jumping = this.game.add.sound('jump');
-  this.jumping.volume = 0.6;
+    //general sounds
+    this.nadando = this.game.add.sound('swim');
+    this.nadando.volume = 0.2;
+    //shooting
+    this.shot0 = this.game.add.sound('shootInk0');
+    this.shot1 = this.game.add.sound('shootInk1');
+    this.shot2 = this.game.add.sound('shootInk2');
+    this.shot3 = this.game.add.sound('shootInk3');
+    this.shot4 = this.game.add.sound('shootInk4');
+    this.shot4.volume = 5;
+    this.shots = [this.shot0,this.shot1,this.shot2,this.shot3,this.shot4];
+    //running
+    this.step = this.game.add.sound('step');
+    this.step.loop = true;
+    this.jumping = this.game.add.sound('jump');
+    this.jumping.volume = 0.6;
 
   this.anchor.setTo(0.5, 1);
   this.scale.setTo(this.scale.x * 1.1, this.scale.y * 1.1);
@@ -144,6 +148,7 @@ Inkling.prototype.update = function (Pool) {
 Inkling.prototype.Swim = function (bool, side, tile) {
   this.isswimming = bool && !this.iskid;
   if(this.isswimming){
+    if(!this.nadando.isPlaying) this.nadando.play();
   if(side!==0){ 
     if(!this.isclimbing){//cuando se entra en estado de climb 
       this.y-=10;
@@ -158,9 +163,9 @@ Inkling.prototype.Swim = function (bool, side, tile) {
     this.isclimbing=true;
     this.climbingside=side;
   }
-  else this.isclimbing=false;
+  else {this.isclimbing=false;if(this.nadando.isPlaying)this.nadando.stop();}
 }
-else this.isclimbing=false;
+else {this.isclimbing=false;if(this.nadando.isPlaying)this.nadando.stop();}
 }
 
 Inkling.prototype.HurtBoxShift = function () {
@@ -295,6 +300,7 @@ Inkling.prototype.Fire = function (Pool) {
       if(this._ammo > 70) this.shots[this.getRandom(0,2)].play();
       if(this._ammo <=70 && this._ammo > 30) this.shots[2].play();
       if(this._ammo <=30) this.shots[3].play();
+      if(this._ammo <=10) this.shots[4].play();
       this.AmmoDecrease();
       if(Pool!==undefined){
         if (this.scale.x < 0) {

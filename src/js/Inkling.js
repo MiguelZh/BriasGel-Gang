@@ -293,8 +293,8 @@ Inkling.prototype.Fire = function (Pool) {
     if (this.game.time.now > this.nextfire) {//si ha pasado suficiente tiempo entre disparos
       this.nextfire = this.game.time.now + this.FireRate;
       if(this._ammo > 70) this.shots[this.getRandom(0,2)].play();
-      if(this._ammo <70 && this._ammo > 30) this.shots[2].play();
-      if(this._ammo <30) this.shots[3].play();
+      if(this._ammo <=70 && this._ammo > 30) this.shots[2].play();
+      if(this._ammo <=30) this.shots[3].play();
       this.AmmoDecrease();
       if(Pool!==undefined){
         if (this.scale.x < 0) {

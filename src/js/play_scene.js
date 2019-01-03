@@ -182,11 +182,13 @@ var PlayScene = {
   },
 
   updateTimer: function(){
+    if(this.timeInSeconds>0){
     this.timeInSeconds--;
     var minutes = Math.floor(this.timeInSeconds / 60);
     var seconds = this.timeInSeconds - (minutes * 60);
     var timeString = this.addZeros(minutes) + ":" + this.addZeros(seconds);
     this.timeText.text = timeString;
+    }
 
     if (this.timeInSeconds == 15) {
       this.countdown = this.game.add.audio('countdown');
@@ -195,6 +197,7 @@ var PlayScene = {
     }
 
     if (this.timeInSeconds == 0) {
+        this.timeInSeconds--;
         this.sound = this.game.add.audio('endSound');
         this.sound.play();
     }

@@ -10,7 +10,7 @@ var BootScene = {
   },
 
   create: function () {
-    this.game.state.start('menu');
+    this.game.state.start('preloader');
   }
 };
 
@@ -48,7 +48,7 @@ var PreloaderScene = {
   },
 
   create: function () {
-    this.game.state.start('play');
+    this.game.state.start('menu');
     this.backgroundSound = this.game.add.audio('backgroundMusic');
     this.backgroundSound.loop = true;
     this.backgroundSound.volume = 0.1;
@@ -64,18 +64,24 @@ var MenuScene = {
   },
   create:function(){
     this.title = this.game.add.sprite(0,0,'menuImage');
+    this.title.inputEnabled = true;
     this.enterText = this.game.add.text(250,this.game.world.height-80,'Press Enter to play!',{font: '40px Times New Roman', fill: 'white', stroke: 'black', strokeThickness: 10})
     var inputKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
     inputKey.onDown.addOnce(this.start,this);
-    this.music = this.game.add.audio('menuMusic');
+    
+    this.title.events.onInputDown.add(function(){
+    if(this.context === undefined){
+    this.context=new AudioContext;
+    this.music = this.game.add.sound('menuMusic');
     this.music.loop = true;
-    this.music.volume = 0.1;
+    this.music.volume=0.5;
     this.music.play();
+    }
+  }, this);
     
   },
   start: function(){
-    this.music.play();
-    this.game.state.start('preloader');
+    this.game.state.start('play');
     this.music.stop();
   }
 }
@@ -89,6 +95,8 @@ window.onload = function () {
       gamepad: true,
     },
   });
+
+
 
   game.state.add('boot', BootScene);
   game.state.add('preloader', PreloaderScene);

@@ -40,6 +40,8 @@ var PlayScene = {
     //creacion del audio
     this.backgroundSound = this.game.add.audio('backgroundMusic');
     this.backgroundSound.loop = true;
+    this.backgroundSound.volume=0.5;
+    this.backgroundSound.play();
     //creacion del mapa
     this.map = this.game.add.tilemap('tilemap');
     this.map.addTilesetImage('tileset');
@@ -92,8 +94,6 @@ var PlayScene = {
     this.healthplayer2.Update(this.player2._health);
     this.ammoplayer1.Update(this.player1._ammo);
     this.ammoplayer2.Update(this.player2._ammo);
-    
-    this.backgroundSound.play();
 
     this.players.forEach(function (player) {
       //colisiones jugadores, mapa

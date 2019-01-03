@@ -78,6 +78,8 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   //running
   this.step = this.game.add.sound('step');
   this.step.loop = true;
+  this.jumping = this.game.add.sound('jump');
+  this.jumping.volume = 0.6;
 
   this.anchor.setTo(0.5, 1);
   this.scale.setTo(this.scale.x * 1.1, this.scale.y * 1.1);
@@ -116,7 +118,7 @@ Inkling.prototype.update = function (Pool) {
   this.Movement(dir);
 
   //Salto
-  if (this.body.onFloor() && (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.9))) this.body.velocity.y = this._jump;
+  if (this.body.onFloor() && (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.9))) {this.body.velocity.y = this._jump;this.jumping.play();}
 
   //transformacion
   if (this.game.input.keyboard.isDown(this.transkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_A))) this.iskid = false;
@@ -290,8 +292,9 @@ Inkling.prototype.Fire = function (Pool) {
   if (this._ammo > 0) {
     if (this.game.time.now > this.nextfire) {//si ha pasado suficiente tiempo entre disparos
       this.nextfire = this.game.time.now + this.FireRate;
-      this.shots[this.getRandom(0,4)].play();
-      this.shot0.play();
+      if(this._ammo > 70) this.shots[this.getRandom(0,2)].play();
+      if(this._ammo <70 && this._ammo > 30) this.shots[2].play();
+      if(this._ammo <30) this.shots[3].play();
       this.AmmoDecrease();
       if(Pool!==undefined){
         if (this.scale.x < 0) {

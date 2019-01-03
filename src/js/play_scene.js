@@ -188,6 +188,12 @@ var PlayScene = {
     var timeString = this.addZeros(minutes) + ":" + this.addZeros(seconds);
     this.timeText.text = timeString;
 
+    if (this.timeInSeconds == 15) {
+      this.countdown = this.game.add.audio('countdown');
+      this.countdown.volume = 0.7;
+        this.countdown.play();
+    }
+
     if (this.timeInSeconds == 0) {
         this.sound = this.game.add.audio('endSound');
         this.sound.play();

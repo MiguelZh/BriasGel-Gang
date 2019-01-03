@@ -40,7 +40,7 @@ var PlayScene = {
     //creacion del audio
     this.backgroundSound = this.game.add.audio('backgroundMusic');
     this.backgroundSound.loop = true;
-    this.backgroundSound.volume=0.5;
+    this.backgroundSound.volume=0.7;
     this.backgroundSound.play();
     //creacion del mapa
     this.map = this.game.add.tilemap('tilemap');
@@ -180,6 +180,18 @@ var PlayScene = {
    
 
   },
+  paintedTilesCounter: function(){
+    var player1tiles=0;
+    var player2tiles=0;
+    var self= this;
+    this.map.forEach(function(tile){
+      if(tile.index===self.player1.color) player1tiles++;
+      else if(tile.index===self.player2.color)player2tiles++;
+    });
+  
+    this.player1points=player1tiles* 10;
+    this.player2points=player2tiles *10;
+  },
 
   updateTimer: function(){
     if(this.timeInSeconds>0){
@@ -191,6 +203,7 @@ var PlayScene = {
     }
 
     if (this.timeInSeconds == 15) {
+      this.backgroundSound.stop();
       this.countdown = this.game.add.audio('countdown');
       this.countdown.volume = 0.7;
         this.countdown.play();
@@ -200,6 +213,8 @@ var PlayScene = {
         this.timeInSeconds--;
         this.sound = this.game.add.audio('endSound');
         this.sound.play();
+        this.paintedTilesCounter();
+        console.log("player1: "+ this.player1points +" " + "player2: " + this.player2points );
     }
   },
 
@@ -208,7 +223,7 @@ var PlayScene = {
         num = "0" + num;
     }
     return num;
-}
+}, 
 
 };
 

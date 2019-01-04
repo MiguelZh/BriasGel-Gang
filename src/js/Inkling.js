@@ -82,6 +82,7 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
     //running
     this.step = this.game.add.sound('step');
     this.step.loop = true;
+    this.step.volume=0.9;
     this.jumping = this.game.add.sound('jump');
     this.jumping.volume = 0.6;
 
@@ -116,8 +117,29 @@ Inkling.prototype.update = function (Pool) {
   if (this.game.input.keyboard.isDown(this.mrightkey)||(this.pad===true &&(this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1))){dir = 1; this.isDown = true; }
   else if (this.game.input.keyboard.isDown(this.mleftkey) || (this.pad===true && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1))) {dir = -1; this.isDown = true;}
   else this.isDown = false;
-  if(this.isDown && this.body.onFloor() && !this.step.isPlaying){ this.step.play();}
-  else if(!this.isDown || !this.body.onFloor()) this.step.stop();
+
+  if(this.isDown){
+    if(!this.isswimming){
+      if(this.body.onFloor()&& !this.step.isPlaying){
+         this.step.play();
+         this.nadando.stop();
+      }
+      else if(!this.body.onFloor()){
+        this.step.stop();
+        this.nadando.stop();
+      }
+  }
+  else {
+    if(!this.nadando.isPlaying){
+      this.step.stop();
+      this.nadando.play();
+    }
+  }
+}
+else {
+  this.nadando.stop();
+  this.step.stop();
+}
 
   this.Movement(dir);
 
@@ -148,7 +170,6 @@ Inkling.prototype.update = function (Pool) {
 Inkling.prototype.Swim = function (bool, side, tile) {
   this.isswimming = bool && !this.iskid;
   if(this.isswimming){
-    if(!this.nadando.isPlaying) this.nadando.play();
   if(side!==0){ 
     if(!this.isclimbing){//cuando se entra en estado de climb 
       this.y-=10;
@@ -163,9 +184,9 @@ Inkling.prototype.Swim = function (bool, side, tile) {
     this.isclimbing=true;
     this.climbingside=side;
   }
-  else {this.isclimbing=false;if(this.nadando.isPlaying)this.nadando.stop();}
+  else {this.isclimbing=false;}
 }
-else {this.isclimbing=false;if(this.nadando.isPlaying)this.nadando.stop();}
+else {this.isclimbing=false;}
 }
 
 Inkling.prototype.HurtBoxShift = function () {

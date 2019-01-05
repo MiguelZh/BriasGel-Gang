@@ -57,8 +57,34 @@ var PlayScene = {
     var backgroundhud = new Interface(this.game, this.game.world.centerX, margin-20, 'hud', 60, 230);
     backgroundhud.anchor.setTo(0.5, 0.5);
 
+    //Pantalla de resultados
+    this.backgroundresults=new Interface(this.game, this.game.world.centerX, this.game.world.centerY, 'hud', 400, 500);
+    this.backgroundresults.anchor.setTo(0.5, 0.5);
+    this.backgroundresults.visible=false;
+    var winnerpos=50;
+    this.winnerText=this.game.add.text(this.backgroundresults.x, this.backgroundresults.y-winnerpos, 'Player1 Wins');
+    this.winnerText.anchor.setTo(0.5,0.5);
+    this.winnerText.font= 'Arial Black';
+    this.winnerText.fontSize=40;
+    this.winnerText.fill='orange';
+    this.winnerText.visible=false;
+    var separation=120;
+    this.player1results=this.game.add.text(this.backgroundresults.x -separation, this.winnerText.y+separation, 'Player1: 2000pts');
+    this.player1results.anchor.setTo(0.5,0.5);
+    this.player1results.font= 'Arial Black';
+    this.player1results.fontSize=20;
+    this.player1results.fill='orange';
+    this.player2results=this.game.add.text(this.backgroundresults.x +separation, this.winnerText.y+separation, 'Player2: 1000pts');
+    this.player2results.anchor.setTo(0.5,0.5);
+    this.player2results.font= 'Arial Black';
+    this.player2results.fontSize=20;
+    this.player2results.fill='purple';
+    this.player1results.visible=false;
+    this.player2results.visible=false;
+
+
     //Timer
-    this.timeInSeconds=120;
+    this.timeInSeconds=20;
     var backgroundTimer=new Interface(this.game, this.game.world.centerX + 300, margin-20, 'hud', 30, 150)
     backgroundTimer.anchor.setTo(0.5, 0.5);
     this.timeText=this.game.add.text(backgroundTimer.x,margin-20,'2:00');
@@ -214,8 +240,38 @@ var PlayScene = {
         this.sound = this.game.add.audio('endSound');
         this.sound.play();
         this.paintedTilesCounter();
-        console.log("player1: "+ this.player1points +" " + "player2: " + this.player2points );
+        this.ShowResults();
+        
     }
+    else if(this.timeInSeconds<0){
+      if(this.timeInSeconds<=-5){
+        this.game.state.start('menu');
+      }
+      else
+      this.timeInSeconds--;
+    }
+  },
+
+  ShowResults: function(){
+      this.backgroundresults.visible=true;
+      if(this.player1points>this.player2points){
+      this.winnerText.text='Player1 Wins';
+      this.winnerText.fill='orange';
+      }
+      else if(this.player2points>this.player1points){
+        this.winnerText.text='Player2 Wins';
+        this.winnerText.fill='purple';
+      }
+      else {
+        this.winnerText.text='Draw';
+        this.winnerText.fill='white';
+      }
+      this.winnerText.visible=true;
+
+      this.player1results.text='Player1: ' + this.player1points + "pts";
+      this.player2results.text='Player2: ' + this.player2points + "pts";
+      this.player1results.visible=true;
+      this.player2results.visible=true;
   },
 
   addZeros: function(num) {

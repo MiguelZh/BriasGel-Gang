@@ -111,6 +111,21 @@ var PlayScene = {
     //activacion del sistema de físicas
     this.physics.startSystem(Phaser.Physics.Arcade);
 
+
+    this.PausedText=this.game.add.text(this.game.world.centerX, this.game.world.centerY, 'PAUSE');
+    this.PausedText.font='Arial Black';
+    this.PausedText.fontSize=40;
+    this.PausedText.fill='white';
+    this.PausedText.stroke= 'black';
+    this.PausedText.strokeThickness=10;
+    this.PausedText.anchor.setTo(0.5,0.5);
+    this.PausedText.visible=false;
+    
+    
+    this.pausekey= this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+    this.pausekey.onDown.add(this.unpause, this);
+
+
   },
 
   ////////UPDATE/////////
@@ -120,6 +135,7 @@ var PlayScene = {
     this.healthplayer2.Update(this.player2._health);
     this.ammoplayer1.Update(this.player1._ammo);
     this.ammoplayer2.Update(this.player2._ammo);
+
 
     this.players.forEach(function (player) {
       //colisiones jugadores, mapa
@@ -245,6 +261,7 @@ var PlayScene = {
     }
     else if(this.timeInSeconds<0){
       if(this.timeInSeconds<=-5){
+        this.game.sound.stopAll();
         this.game.state.start('menu');
       }
       else
@@ -274,11 +291,23 @@ var PlayScene = {
       this.player2results.visible=true;
   },
 
-  addZeros: function(num) {
-    if (num < 10) {
-        num = "0" + num;
+  unpause: function(){
+    console.log("A");
+    if(this.game.paused){
+      this.game.paused=false;
+      this.PausedText.visible=false;
     }
-    return num;
+    else{
+      this.game.paused=true;
+      this.PausedText.visible=true;
+    }
+  },
+
+  addZeros: function(number) {
+    if (number < 10) {
+        number= "0" + number;
+    }
+    return number;
 }, 
 
 };

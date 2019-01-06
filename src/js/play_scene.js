@@ -140,6 +140,7 @@ var PlayScene = {
       if(this.game.paused){
         console.log(this.click.x)
         if(this.click.x>this.pausebutton.x && this.click.x<this.pausebutton.x+this.pausebutton.width && this.click.y>this.pausebutton.y && this.click.y<this.pausebutton.y+this.pausebutton.height) {
+          this.game.sound.stopAll();
           this.game.state.start('menu');
           this.game.paused=false;
         }

@@ -84,7 +84,7 @@ var PlayScene = {
 
 
     //Timer
-    this.timeInSeconds=20;
+    this.timeInSeconds=120;
     var backgroundTimer=new Interface(this.game, this.game.world.centerX + 300, margin-20, 'hud', 30, 150)
     backgroundTimer.anchor.setTo(0.5, 0.5);
     this.timeText=this.game.add.text(backgroundTimer.x,margin-20,'2:00');
@@ -120,12 +120,30 @@ var PlayScene = {
     this.PausedText.strokeThickness=10;
     this.PausedText.anchor.setTo(0.5,0.5);
     this.PausedText.visible=false;
-    
-    
+    var buttonofset=50;
+    this.pausebutton=this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + buttonofset, 'pausebutton');
+    this.pausebutton.x=this.pausebutton.x - this.pausebutton.width/2;
+    this.pausebutton.visible=false;
+
+
     this.pausekey= this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
     this.pausekey.onDown.add(this.unpause, this);
+    this.click=this.game.input;
+    this.game.input.onDown.add(this.returntoMenu, this);
 
 
+  },
+
+  returntoMenu: function(){
+   
+    
+      if(this.game.paused){
+        console.log(this.click.x)
+        if(this.click.x>this.pausebutton.x && this.click.x<this.pausebutton.x+this.pausebutton.width && this.click.y>this.pausebutton.y && this.click.y<this.pausebutton.y+this.pausebutton.height) {
+          this.game.state.start('menu');
+          this.game.paused=false;
+        }
+      }
   },
 
   ////////UPDATE/////////
@@ -292,13 +310,14 @@ var PlayScene = {
   },
 
   unpause: function(){
-    console.log("A");
     if(this.game.paused){
       this.game.paused=false;
       this.PausedText.visible=false;
+      this.pausebutton.visible=false;
     }
     else{
       this.game.paused=true;
+      this.pausebutton.visible=true;
       this.PausedText.visible=true;
     }
   },

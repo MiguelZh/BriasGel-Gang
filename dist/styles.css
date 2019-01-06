@@ -1,3 +1,7 @@
+@font-face{
+	src: url(fontas/Pixel-Miners.otf);
+	font-family: mine;
+}
 html {
   font-size: 10px;
   -webkit-font-smoothing: antialiased;
@@ -11,6 +15,12 @@ body {
   background: #fff;
   color: #000;
 }
+.p1{
+	font-size: 1.6rem;
+	line-height: 62px;
+	font-family: mine;
+}
+
 
 a {
   color: #c39;

@@ -61,9 +61,11 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   this.pad = gamepad;
   this.game.input.gamepad.start();
   this.pad1=this.game.input.gamepad.pad1;
+  /*
   if(this.game.input.gamepad.supported && this.game.input.gamepad.active ){
     console.log("Hola!!!!!");
   }
+  */
   //Controles
   this.mrightkey = RIGHT;
   this.mleftkey = LEFT;
@@ -97,6 +99,23 @@ var Inkling = function (game, x, y, sprite, speed, jump, RIGHT, LEFT, JUMP, SWIM
   this.animations.add('swim', [90, 91, 92, 93], 9, true);
   this.animations.add('swimidle', [90, 91], 9, true);
 
+    //general sounds
+    this.nadando = this.game.add.sound('swim');
+    this.nadando.volume = 0.2;
+    //shooting
+    this.shot0 = this.game.add.sound('shootInk0');
+    this.shot1 = this.game.add.sound('shootInk1');
+    this.shot2 = this.game.add.sound('shootInk2');
+    this.shot3 = this.game.add.sound('shootInk3');
+    this.shot4 = this.game.add.sound('shootInk4');
+    this.shot4.volume = 5;
+    this.shots = [this.shot0,this.shot1,this.shot2,this.shot3,this.shot4];
+    //running
+    this.step = this.game.add.sound('step');
+    this.step.loop = true;
+    this.step.volume=0.9;
+    this.jumping = this.game.add.sound('jump');
+    this.jumping.volume = 0.6;
 
   this.anchor.setTo(0.5, 1);
   this.scale.setTo(this.scale.x * 1.1, this.scale.y * 1.1);
@@ -126,14 +145,37 @@ Inkling.prototype.update = function (Pool) {
   if (this.iskid || !this.body.onFloor()) this._speed = this.kidspeed;
   else if (!this.isswimming) this._speed = this.squidspeed;
   else this._speed = this.swimspeed;
+  if (this.game.input.keyboard.isDown(this.mrightkey)||(this.pad===true &&(this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1))){dir = 1; this.isDown = true; }
+  else if (this.game.input.keyboard.isDown(this.mleftkey) || (this.pad===true && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1))) {dir = -1; this.isDown = true;}
+  else this.isDown = false;
 
-  if (this.game.input.keyboard.isDown(this.mrightkey)||(this.pad===true &&(this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1))) dir = 1;
-  else if (this.game.input.keyboard.isDown(this.mleftkey) || (this.pad===true && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1))) dir = -1;
+  if(this.isDown){
+    if(!this.isswimming){
+      if(this.body.onFloor()&& !this.step.isPlaying){
+         this.step.play();
+         this.nadando.stop();
+      }
+      else if(!this.body.onFloor()){
+        this.step.stop();
+        this.nadando.stop();
+      }
+  }
+  else {
+    if(!this.nadando.isPlaying){
+      this.step.stop();
+      this.nadando.play();
+    }
+  }
+}
+else {
+  this.nadando.stop();
+  this.step.stop();
+}
 
   this.Movement(dir);
 
   //Salto
-  if (this.body.onFloor() && (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.9))) this.body.velocity.y = this._jump;
+  if (this.body.onFloor() && (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.9))) {this.body.velocity.y = this._jump;this.jumping.play();}
 
   //transformacion
   if (this.game.input.keyboard.isDown(this.transkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_A))) this.iskid = false;
@@ -173,9 +215,9 @@ Inkling.prototype.Swim = function (bool, side, tile) {
     this.isclimbing=true;
     this.climbingside=side;
   }
-  else this.isclimbing=false;
+  else {this.isclimbing=false;}
 }
-else this.isclimbing=false;
+else {this.isclimbing=false;}
 }
 
 Inkling.prototype.HurtBoxShift = function () {
@@ -307,6 +349,10 @@ Inkling.prototype.Fire = function (Pool) {
   if (this._ammo > 0) {
     if (this.game.time.now > this.nextfire) {//si ha pasado suficiente tiempo entre disparos
       this.nextfire = this.game.time.now + this.FireRate;
+      if(this._ammo > 70) this.shots[this.getRandom(0,2)].play();
+      if(this._ammo <=70 && this._ammo > 30) this.shots[2].play();
+      if(this._ammo <=30) this.shots[3].play();
+      if(this._ammo <=10) this.shots[4].play();
       this.AmmoDecrease();
       if(Pool!==undefined){
         if (this.scale.x < 0) {
@@ -319,7 +365,9 @@ Inkling.prototype.Fire = function (Pool) {
     }
   }
 }
-
+Inkling.prototype.getRandom = function (min, max) {
+  return  Math.floor( Math.random() * (max - min) + min );
+}
 
 
 
@@ -403,7 +451,7 @@ var BootScene = {
   },
 
   create: function () {
-    this.game.state.start('menu');
+    this.game.state.start('preloader');
   }
 };
 
@@ -427,17 +475,26 @@ var PreloaderScene = {
     this.game.load.image('backgroundpu', 'assets/sprites/PurpleBackground.png');
     this.game.load.image('healthind', 'assets/sprites/HealthIcon.png');
     this.game.load.image('deadicon', 'assets/sprites/F.png');
-    this.game.load.image('ammoind', 'assets/sprites/InkTank.png')
+    this.game.load.image('ammoind', 'assets/sprites/InkTank.png');
+    this.game.load.image('pausebutton', 'assets/sprites/button_return-to-main-menu.png');
     //load sounds/music
-    this.game.load.audio('backgroundMusic','assets/audio/Splatoon_2_Fly_Octo_Fly.mp3')
+    this.game.load.audio('backgroundMusic','assets/audio/Splatoon_2_Fly_Octo_Fly.mp3');
+    this.game.load.audio('shootInk0','assets/audio/sounds/inkHitSplash00.wav');
+    this.game.load.audio('shootInk1','assets/audio/sounds/inkHitSplash01.wav');
+    this.game.load.audio('shootInk2','assets/audio/sounds/inkHitSplash02.wav');
+    this.game.load.audio('shootInk3','assets/audio/sounds/inkHitSplash03.wav');
+    this.game.load.audio('shootInk4','assets/audio/sounds/noAmmo.mp3');
+    this.game.load.audio('endSound','assets/audio/sounds/gameFinish.wav');
+    this.game.load.audio('step','assets/audio/sounds/step.wav');
+    this.game.load.audio('swim','assets/audio/sounds/swim.wav');
+    this.game.load.audio('jump','assets/audio/sounds/jump.mp3');
+    this.game.load.audio('countdown','assets/audio/sounds/countdownTimer.mp3');
+
 
   },
 
   create: function () {
-    this.game.state.start('play');
-    this.backgroundSound = this.game.add.audio('backgroundMusic');
-    this.backgroundSound.loop = true;
-    this.backgroundSound.play();
+    this.game.state.start('menu');
   }
 };
 
@@ -449,15 +506,24 @@ var MenuScene = {
   },
   create:function(){
     this.title = this.game.add.sprite(0,0,'menuImage');
-    this.enterText = this.game.add.text(250,this.game.world.height-80,'Press Space to play!',{font: '40px Times New Roman', fill: 'white', stroke: 'black', strokeThickness: 10})
-    var spacebar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    spacebar.onDown.addOnce(this.start,this);
-    this.music = this.game.add.audio('menuMusic');
+    this.title.inputEnabled = true;
+    this.enterText = this.game.add.text(250,this.game.world.height-80,'Press Enter to play!',{font: '40px Times New Roman', fill: 'white', stroke: 'black', strokeThickness: 10})
+    var inputKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+    inputKey.onDown.addOnce(this.start,this);
+    this.music = this.game.add.sound('menuMusic');
+    this.title.events.onInputDown.add(function(){
+    if(this.context === undefined){
+    this.context=new AudioContext;
+    
     this.music.loop = true;
+    this.music.volume=0.5;
     this.music.play();
+    }
+  }, this);
+    
   },
   start: function(){
-    this.game.state.start('preloader');
+    this.game.state.start('play');
     this.music.stop();
   }
 }
@@ -471,6 +537,8 @@ window.onload = function () {
       gamepad: true,
     },
   });
+
+
 
   game.state.add('boot', BootScene);
   game.state.add('preloader', PreloaderScene);
@@ -565,6 +633,8 @@ var PlayScene = {
     //creacion del audio
     this.backgroundSound = this.game.add.audio('backgroundMusic');
     this.backgroundSound.loop = true;
+    this.backgroundSound.volume=0.7;
+    this.backgroundSound.play();
     //creacion del mapa
     this.map = this.game.add.tilemap('tilemap');
     this.map.addTilesetImage('tileset');
@@ -572,17 +642,59 @@ var PlayScene = {
     this.map.setCollision([1, 2]);
     
     //creacion de jugadores
-    this.player1 = new Inkling(this.game, this.game.world.centerX + 150, 0, 'Inklingo', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.P, Phaser.Keyboard.O, 2,false);
-    this.player2 = new Inkling(this.game, this.game.world.centerX - 150, this.game.world.centerY, 'Inklingp', 300, -400, Phaser.Gamepad.XBOX360_DPAD_LEFT , Phaser.Gamepad.XBOX360_STICK_LEFT_X, Phaser.Gamepad.XBOX360_DPAD_UP , Phaser.Gamepad.XBOX360_DPAD_DOWN ,  Phaser.Gamepad.XBOX360_X, Phaser.Keyboard.G, Phaser.Keyboard.F, 3,true);
-
+    this.player1 = new Inkling(this.game, this.game.world.centerX + 350, 0, 'Inklingo', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.P, Phaser.Keyboard.O, 2,false);
+    this.player2 = new Inkling(this.game, this.game.world.centerX - 350, 0, 'Inklingp', 300, -400, Phaser.Gamepad.XBOX360_DPAD_LEFT , Phaser.Gamepad.XBOX360_STICK_LEFT_X, Phaser.Gamepad.XBOX360_DPAD_UP , Phaser.Gamepad.XBOX360_DPAD_DOWN ,  Phaser.Gamepad.XBOX360_X, Phaser.Keyboard.G, Phaser.Keyboard.F, 3,true);
+    this.player1.scale.x=-this.player1.scale.x;
     //creacion de interfaz
-    var backgroundhud = new Interface(this.game, this.game.world.centerX, 50, 'hud', 60, 230);
+    var margin=this.game.height-10;
+    var backgroundhud = new Interface(this.game, this.game.world.centerX, margin-20, 'hud', 60, 230);
     backgroundhud.anchor.setTo(0.5, 0.5);
-     this.healthplayer1 = new GaugeIcon(this.game, this.game.world.centerX - 60, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX - 60, 70, this.player1);
-     this.healthplayer2 = new GaugeIcon(this.game, this.game.world.centerX + 20, 70, 'healthind', 'deadicon', 45, 40, 45, 40, this.game.world.centerX + 20, 70, this.player2);
-     this.ammoplayer1= new GaugeIcon(this.game, this.game.world.centerX - 105, 70, 'ammoind', 'ammoind', 40, 20, 30, 20, this.game.world.centerX - 105, 65, this.player1);
-     this.ammoplayer2= new GaugeIcon(this.game, this.game.world.centerX + 85, 70, 'ammoind', 'ammoind', 40, 20, 30, 20, this.game.world.centerX + 85, 65, this.player2);
 
+    //Pantalla de resultados
+    this.backgroundresults=new Interface(this.game, this.game.world.centerX, this.game.world.centerY, 'hud', 400, 500);
+    this.backgroundresults.anchor.setTo(0.5, 0.5);
+    this.backgroundresults.visible=false;
+    var winnerpos=50;
+    this.winnerText=this.game.add.text(this.backgroundresults.x, this.backgroundresults.y-winnerpos, 'Player1 Wins');
+    this.winnerText.anchor.setTo(0.5,0.5);
+    this.winnerText.font= 'Arial Black';
+    this.winnerText.fontSize=40;
+    this.winnerText.fill='orange';
+    this.winnerText.visible=false;
+    var separation=120;
+    this.player1results=this.game.add.text(this.backgroundresults.x -separation, this.winnerText.y+separation, 'Player1: 2000pts');
+    this.player1results.anchor.setTo(0.5,0.5);
+    this.player1results.font= 'Arial Black';
+    this.player1results.fontSize=20;
+    this.player1results.fill='orange';
+    this.player2results=this.game.add.text(this.backgroundresults.x +separation, this.winnerText.y+separation, 'Player2: 1000pts');
+    this.player2results.anchor.setTo(0.5,0.5);
+    this.player2results.font= 'Arial Black';
+    this.player2results.fontSize=20;
+    this.player2results.fill='purple';
+    this.player1results.visible=false;
+    this.player2results.visible=false;
+
+
+    //Timer
+    this.timeInSeconds=120;
+    var backgroundTimer=new Interface(this.game, this.game.world.centerX + 300, margin-20, 'hud', 30, 150)
+    backgroundTimer.anchor.setTo(0.5, 0.5);
+    this.timeText=this.game.add.text(backgroundTimer.x,margin-20,'2:00');
+    this.timeText.anchor.setTo(0.5,0.5);
+    this.timeText.font = 'Arial Black';
+    this.timeText.fontSize = 20;
+    this.timeText.fontWeight = 'bold';
+    this.timeText.fill = 'white';
+    this.timer=this.game.time.events.loop(Phaser.Timer.SECOND, this.updateTimer, this);
+      
+
+
+
+     this.healthplayer1 = new GaugeIcon(this.game, backgroundhud.x - 60, margin, 'healthind', 'deadicon', 45, 40, 45, 40, backgroundhud.x - 60, margin, this.player1);
+     this.healthplayer2 = new GaugeIcon(this.game, backgroundhud.x + 20, margin, 'healthind', 'deadicon', 45, 40, 45, 40, backgroundhud.x + 20, margin, this.player2);
+     this.ammoplayer1= new GaugeIcon(this.game, backgroundhud.x - 105, margin, 'ammoind', 'ammoind', 40, 20, 30, 20, backgroundhud.x - 105, margin-5, this.player1);
+     this.ammoplayer2= new GaugeIcon(this.game, backgroundhud.x + 85, margin, 'ammoind', 'ammoind', 40, 20, 30, 20, backgroundhud.x + 85, margin-5, this.player2);
 
     //guardado en array de jugadores
     this.players=[];
@@ -592,6 +704,40 @@ var PlayScene = {
     //activacion del sistema de físicas
     this.physics.startSystem(Phaser.Physics.Arcade);
 
+
+    this.PausedText=this.game.add.text(this.game.world.centerX, this.game.world.centerY, 'PAUSE');
+    this.PausedText.font='Arial Black';
+    this.PausedText.fontSize=40;
+    this.PausedText.fill='white';
+    this.PausedText.stroke= 'black';
+    this.PausedText.strokeThickness=10;
+    this.PausedText.anchor.setTo(0.5,0.5);
+    this.PausedText.visible=false;
+    var buttonofset=50;
+    this.pausebutton=this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + buttonofset, 'pausebutton');
+    this.pausebutton.x=this.pausebutton.x - this.pausebutton.width/2;
+    this.pausebutton.visible=false;
+
+
+    this.pausekey= this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+    this.pausekey.onDown.add(this.unpause, this);
+    this.click=this.game.input;
+    this.game.input.onDown.add(this.returntoMenu, this);
+
+
+  },
+
+  returntoMenu: function(){
+   
+    
+      if(this.game.paused){
+        console.log(this.click.x)
+        if(this.click.x>this.pausebutton.x && this.click.x<this.pausebutton.x+this.pausebutton.width && this.click.y>this.pausebutton.y && this.click.y<this.pausebutton.y+this.pausebutton.height) {
+          this.game.sound.stopAll();
+          this.game.state.start('menu');
+          this.game.paused=false;
+        }
+      }
   },
 
   ////////UPDATE/////////
@@ -601,8 +747,7 @@ var PlayScene = {
     this.healthplayer2.Update(this.player2._health);
     this.ammoplayer1.Update(this.player1._ammo);
     this.ammoplayer2.Update(this.player2._ammo);
-    
-    this.backgroundSound.play();
+
 
     this.players.forEach(function (player) {
       //colisiones jugadores, mapa
@@ -688,7 +833,95 @@ var PlayScene = {
 
    
 
-  }
+  },
+  paintedTilesCounter: function(){
+    var player1tiles=0;
+    var player2tiles=0;
+    var self= this;
+    this.map.forEach(function(tile){
+      if(tile.index===self.player1.color) player1tiles++;
+      else if(tile.index===self.player2.color)player2tiles++;
+    });
+  
+    this.player1points=player1tiles* 10;
+    this.player2points=player2tiles *10;
+  },
+
+  updateTimer: function(){
+    if(this.timeInSeconds>0){
+    this.timeInSeconds--;
+    var minutes = Math.floor(this.timeInSeconds / 60);
+    var seconds = this.timeInSeconds - (minutes * 60);
+    var timeString = this.addZeros(minutes) + ":" + this.addZeros(seconds);
+    this.timeText.text = timeString;
+    }
+
+    if (this.timeInSeconds == 15) {
+      this.backgroundSound.stop();
+      this.countdown = this.game.add.audio('countdown');
+      this.countdown.volume = 0.7;
+        this.countdown.play();
+    }
+
+    if (this.timeInSeconds == 0) {
+        this.timeInSeconds--;
+        this.sound = this.game.add.audio('endSound');
+        this.sound.play();
+        this.paintedTilesCounter();
+        this.ShowResults();
+        
+    }
+    else if(this.timeInSeconds<0){
+      if(this.timeInSeconds<=-5){
+        this.game.sound.stopAll();
+        this.game.state.start('menu');
+      }
+      else
+      this.timeInSeconds--;
+    }
+  },
+
+  ShowResults: function(){
+      this.backgroundresults.visible=true;
+      if(this.player1points>this.player2points){
+      this.winnerText.text='Player1 Wins';
+      this.winnerText.fill='orange';
+      }
+      else if(this.player2points>this.player1points){
+        this.winnerText.text='Player2 Wins';
+        this.winnerText.fill='purple';
+      }
+      else {
+        this.winnerText.text='Draw';
+        this.winnerText.fill='white';
+      }
+      this.winnerText.visible=true;
+
+      this.player1results.text='Player1: ' + this.player1points + "pts";
+      this.player2results.text='Player2: ' + this.player2points + "pts";
+      this.player1results.visible=true;
+      this.player2results.visible=true;
+  },
+
+  unpause: function(){
+    if(this.game.paused){
+      this.game.paused=false;
+      this.PausedText.visible=false;
+      this.pausebutton.visible=false;
+    }
+    else{
+      this.game.paused=true;
+      this.pausebutton.visible=true;
+      this.PausedText.visible=true;
+    }
+  },
+
+  addZeros: function(number) {
+    if (number < 10) {
+        number= "0" + number;
+    }
+    return number;
+}, 
 
 };
 

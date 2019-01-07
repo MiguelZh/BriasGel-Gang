@@ -109,7 +109,6 @@ Inkling.prototype.NeutralAngle=0;
 
 Inkling.prototype.update = function (Pool) {
   var dir = 0;
-
   //movimiento teclado y mando
   if (this.iskid || !this.body.onFloor()) this._speed = this.kidspeed;
   else if (!this.isswimming) this._speed = this.squidspeed;
@@ -147,15 +146,22 @@ else {
   if (this.body.onFloor() && (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.9))) {this.body.velocity.y = this._jump;this.jumping.play();}
 
   //transformacion
-  if (this.game.input.keyboard.isDown(this.transkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_A))) this.iskid = false;
+  if (this.game.input.keyboard.isDown(this.transkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_B))) this.iskid = false;
   else this.iskid = true;
   
 
 
   //disparo
-  if ((this.game.input.keyboard.isDown(this.shootkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_X))) && this.iskid) {
+  if ((this.game.input.keyboard.isDown(this.shootkey) && this.iskid)) {
     this.shooting = true;
-    this.Fire(Pool);
+    this.Fire(Pool,0);
+  }
+  else if((this.pad ===true && (this.pad1.isDown(Phaser.Gamepad.XBOX360_X)|| this.pad1.isDown(Phaser.Gamepad.XBOX360_Y)|| this.pad1.isDown(Phaser.Gamepad.XBOX360_A))) && this.iskid){
+    this.shooting = true;
+    if(this.pad1.isDown(Phaser.Gamepad.XBOX360_X)){this.Fire(Pool,1);}
+    if(this.pad1.isDown(Phaser.Gamepad.XBOX360_Y)){this.Fire(Pool,2);}
+    if(this.pad1.isDown(Phaser.Gamepad.XBOX360_A)){ this.Fire(Pool,3);}
+    
   }
   else this.shooting = false;
 
@@ -309,12 +315,11 @@ Inkling.prototype.Recharge = function () {
 }
 
 
-Inkling.prototype.Fire = function (Pool) {
+Inkling.prototype.Fire = function (Pool,ControllerAngle) {
   //aumento de velocidad de la bala si se esta moviendo
   var angle=this.NeutralAngle;
-  if(this.game.input.keyboard.isDown(this.aimup)) angle=this.AngleUp;
-  else if(this.game.input.keyboard.isDown(this.aimdown)) angle=this.AngleDown;
-
+  if(this.game.input.keyboard.isDown(this.aimup) || ControllerAngle === 3) angle=this.AngleUp;
+  else if(this.game.input.keyboard.isDown(this.aimdown) || ControllerAngle === 2) angle=this.AngleDown;
   if (this._ammo > 0) {
     if (this.game.time.now > this.nextfire) {//si ha pasado suficiente tiempo entre disparos
       this.nextfire = this.game.time.now + this.FireRate;

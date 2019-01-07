@@ -36,7 +36,7 @@ var PreloaderScene = {
     this.game.load.image('deadicon', 'assets/sprites/F.png');
     this.game.load.image('ammoind', 'assets/sprites/InkTank.png');
     this.game.load.image('pausebutton', 'assets/sprites/ReturnToMainMenu.png');
-    this.game.load.image('gameBackground','assets/sprites/scrollingBack.jpg');
+    this.game.load.image('gameBackground','assets/sprites/scrollingBack.png');
     //load sounds/music
     this.game.load.audio('backgroundMusic','assets/audio/Splatoon_2_Fly_Octo_Fly.mp3');
     this.game.load.audio('shootInk0','assets/audio/inkHitSplash00.wav');

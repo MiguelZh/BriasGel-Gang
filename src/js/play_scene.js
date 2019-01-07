@@ -29,6 +29,7 @@ var shot = require('./Shot.js');
 var PlayScene = {
   ////////CREATE//////////
   create: function () {
+     this.backgroundImage = this.game.add.tileSprite(275,0,800,600,'gameBackground');
     //creacion de array de balas
     var bullets = [];
     for (var i = 0; i < 50; i++) {
@@ -43,7 +44,7 @@ var PlayScene = {
     this.backgroundSound.volume=0.7;
     this.backgroundSound.play();
     //creacion del mapa
-    this.backgroundImage = this.game.add.tileSprite(0,0,800,600,'gameBackground');
+   
     this.map = this.game.add.tilemap('tilemap');
     this.map.addTilesetImage('tileset');
     this.layer = this.map.createLayer('Capa de Patrones 1');

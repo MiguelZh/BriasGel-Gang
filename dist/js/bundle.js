@@ -140,7 +140,6 @@ Inkling.prototype.NeutralAngle=0;
 
 Inkling.prototype.update = function (Pool) {
   var dir = 0;
-
   //movimiento teclado y mando
   if (this.iskid || !this.body.onFloor()) this._speed = this.kidspeed;
   else if (!this.isswimming) this._speed = this.squidspeed;
@@ -178,15 +177,22 @@ else {
   if (this.body.onFloor() && (this.game.input.keyboard.isDown(this.jumpkey) || this.pad && (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) < -0.9))) {this.body.velocity.y = this._jump;this.jumping.play();}
 
   //transformacion
-  if (this.game.input.keyboard.isDown(this.transkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_A))) this.iskid = false;
+  if (this.game.input.keyboard.isDown(this.transkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_B))) this.iskid = false;
   else this.iskid = true;
   
 
 
   //disparo
-  if ((this.game.input.keyboard.isDown(this.shootkey)||(this.pad ===true && this.pad1.isDown(Phaser.Gamepad.XBOX360_X))) && this.iskid) {
+  if ((this.game.input.keyboard.isDown(this.shootkey) && this.iskid)) {
     this.shooting = true;
-    this.Fire(Pool);
+    this.Fire(Pool,0);
+  }
+  else if((this.pad ===true && (this.pad1.isDown(Phaser.Gamepad.XBOX360_X)|| this.pad1.isDown(Phaser.Gamepad.XBOX360_Y)|| this.pad1.isDown(Phaser.Gamepad.XBOX360_A))) && this.iskid){
+    this.shooting = true;
+    if(this.pad1.isDown(Phaser.Gamepad.XBOX360_X)){this.Fire(Pool,1);}
+    if(this.pad1.isDown(Phaser.Gamepad.XBOX360_Y)){this.Fire(Pool,2);}
+    if(this.pad1.isDown(Phaser.Gamepad.XBOX360_A)){ this.Fire(Pool,3);}
+    
   }
   else this.shooting = false;
 
@@ -340,12 +346,11 @@ Inkling.prototype.Recharge = function () {
 }
 
 
-Inkling.prototype.Fire = function (Pool) {
+Inkling.prototype.Fire = function (Pool,ControllerAngle) {
   //aumento de velocidad de la bala si se esta moviendo
   var angle=this.NeutralAngle;
-  if(this.game.input.keyboard.isDown(this.aimup)) angle=this.AngleUp;
-  else if(this.game.input.keyboard.isDown(this.aimdown)) angle=this.AngleDown;
-
+  if(this.game.input.keyboard.isDown(this.aimup) || ControllerAngle === 3) angle=this.AngleUp;
+  else if(this.game.input.keyboard.isDown(this.aimdown) || ControllerAngle === 2) angle=this.AngleDown;
   if (this._ammo > 0) {
     if (this.game.time.now > this.nextfire) {//si ha pasado suficiente tiempo entre disparos
       this.nextfire = this.game.time.now + this.FireRate;
@@ -477,6 +482,7 @@ var PreloaderScene = {
     this.game.load.image('deadicon', 'assets/sprites/F.png');
     this.game.load.image('ammoind', 'assets/sprites/InkTank.png');
     this.game.load.image('pausebutton', 'assets/sprites/ReturnToMainMenu.png');
+    this.game.load.image('gameBackground','assets/sprites/scrollingBack.png');
     //load sounds/music
     this.game.load.audio('backgroundMusic','assets/audio/Splatoon_2_Fly_Octo_Fly.mp3');
     this.game.load.audio('shootInk0','assets/audio/inkHitSplash00.wav');
@@ -621,6 +627,7 @@ var shot = require('./Shot.js');
 var PlayScene = {
   ////////CREATE//////////
   create: function () {
+     this.backgroundImage = this.game.add.tileSprite(275,0,800,600,'gameBackground');
     //creacion de array de balas
     var bullets = [];
     for (var i = 0; i < 50; i++) {
@@ -635,10 +642,12 @@ var PlayScene = {
     this.backgroundSound.volume=0.7;
     this.backgroundSound.play();
     //creacion del mapa
+   
     this.map = this.game.add.tilemap('tilemap');
     this.map.addTilesetImage('tileset');
     this.layer = this.map.createLayer('Capa de Patrones 1');
     this.map.setCollision([1, 2]);
+
     
     //creacion de jugadores
     this.player1 = new Inkling(this.game, this.game.world.centerX + 350, 0, 'Inklingo', 300, -400, Phaser.Keyboard.D, Phaser.Keyboard.A, Phaser.Keyboard.W, Phaser.Keyboard.S, Phaser.Keyboard.SPACEBAR, Phaser.Keyboard.P, Phaser.Keyboard.O, 2,false);
@@ -712,12 +721,13 @@ var PlayScene = {
     this.PausedText.strokeThickness=10;
     this.PausedText.anchor.setTo(0.5,0.5);
     this.PausedText.visible=false;
+
     var buttonofset=50;
     this.pausebutton=this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + buttonofset, 'pausebutton');
     this.pausebutton.x=this.pausebutton.x - this.pausebutton.width/2;
     this.pausebutton.visible=false;
-
-
+    
+    
     this.pausekey= this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
     this.pausekey.onDown.add(this.unpause, this);
     this.click=this.game.input;
@@ -729,15 +739,15 @@ var PlayScene = {
   returntoMenu: function(){
    
     
-      if(this.game.paused){
-        console.log(this.click.x)
-        if(this.click.x>this.pausebutton.x && this.click.x<this.pausebutton.x+this.pausebutton.width && this.click.y>this.pausebutton.y && this.click.y<this.pausebutton.y+this.pausebutton.height) {
-          this.game.sound.stopAll();
-          this.game.state.start('menu');
-          this.game.paused=false;
-        }
+    if(this.game.paused){
+      console.log(this.click.x)
+      if(this.click.x>this.pausebutton.x && this.click.x<this.pausebutton.x+this.pausebutton.width && this.click.y>this.pausebutton.y && this.click.y<this.pausebutton.y+this.pausebutton.height) {
+        this.game.sound.stopAll();
+        this.game.state.start('menu');
+        this.game.paused=false;
       }
-  },
+    }
+},
 
   ////////UPDATE/////////
   update: function () {
@@ -747,6 +757,7 @@ var PlayScene = {
     this.ammoplayer1.Update(this.player1._ammo);
     this.ammoplayer2.Update(this.player2._ammo);
 
+    this.backgroundImage.tilePosition.y += 5;
 
     this.players.forEach(function (player) {
       //colisiones jugadores, mapa
@@ -903,6 +914,7 @@ var PlayScene = {
   },
 
   unpause: function(){
+    console.log("A");
     if(this.game.paused){
       this.game.paused=false;
       this.PausedText.visible=false;
@@ -910,8 +922,8 @@ var PlayScene = {
     }
     else{
       this.game.paused=true;
-      this.pausebutton.visible=true;
       this.PausedText.visible=true;
+      this.pausebutton.visible=true;
     }
   },
 

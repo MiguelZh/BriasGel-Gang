@@ -29,6 +29,8 @@ var shot = require('./Shot.js');
 var PlayScene = {
   ////////CREATE//////////
   create: function () {
+    //imagen de fondo
+    this.backgroundImage = this.game.add.tileSprite(0,0,800,600,'gameBackground');
     //creacion de array de balas
     var bullets = [];
     for (var i = 0; i < 50; i++) {
@@ -43,7 +45,7 @@ var PlayScene = {
     this.backgroundSound.volume=0.7;
     this.backgroundSound.play();
     //creacion del mapa
-    this.backgroundImage = this.game.add.tileSprite(0,0,800,600,'gameBackground');
+
     this.map = this.game.add.tilemap('tilemap');
     this.map.addTilesetImage('tileset');
     this.layer = this.map.createLayer('Capa de Patrones 1');
@@ -132,13 +134,14 @@ var PlayScene = {
 
   ////////UPDATE/////////
   update: function () {
+
     self = this;
     this.healthplayer1.Update(this.player1._health);
     this.healthplayer2.Update(this.player2._health);
     this.ammoplayer1.Update(this.player1._ammo);
     this.ammoplayer2.Update(this.player2._ammo);
 
-    this.backgroundImage.tilePosition.y += 5;
+
 
     this.players.forEach(function (player) {
       //colisiones jugadores, mapa
@@ -222,7 +225,7 @@ var PlayScene = {
     }
     });
 
-   
+    this.backgroundImage.tilePosition.y += 2;
 
   },
   paintedTilesCounter: function(){

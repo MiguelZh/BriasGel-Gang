@@ -17,6 +17,12 @@ also being able to climb up walls. Moreover, while you are in the
 Once the timer finishes, the team that has more percentage of ground covered by ink will be 
 the winner of the match.
 
+## How To Play
+Splatoon-demake is a local 1v1 where one player uses the keyboard and the other a gamepad. You can find the controls on the game page (Link below). You can move, jump, shoot in front of you and diagonally upwards and downwards and transform into skidform to swim through your ink and recharge your weapon.
+
+## Why Would I Play
+Splatoon-demake is a simpler and more accessible version of Splatoon that encapsulates the core mechanics of the game in shorter and more focused matches. It also allows for local multyplayer.
+
 ## **Game footage**
 
 <img style="-webkit-user-select: none;" src="https://i.pinimg.com/originals/c5/4b/fc/c54bfcc5f67f3a0c94b43a7166baa4a2.png">

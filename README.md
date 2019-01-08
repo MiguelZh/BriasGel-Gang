@@ -25,9 +25,7 @@ Splatoon-demake is a simpler and more accessible version of Splatoon that encaps
 
 ## **Game footage**
 
-<img style="-webkit-user-select: none;" src="https://i.pinimg.com/originals/c5/4b/fc/c54bfcc5f67f3a0c94b43a7166baa4a2.png">
-
-Splatoon Advance - Mockup Pixel Artist: Davitsu Source: davitsu.tumblr.com
+<img style="-webkit-user-select: none;" src="https://github.com/MiguelZh/BriasGel-Gang/blob/master/splatdem.png?raw=true">
 
 ## PLAY NOW
 https://miguelzh.github.io/BriasGel-Gang/dist/
